@@ -13,28 +13,37 @@ public class Autenticacao {
         serverdb = server;
     }
 
-    public void conexao(){
+    public int conexao(){
         int login=0;
         while(login==0) {
             try {
                 int received = in.readInt();
+
                 switch (received) {
+                    case -1:
+                        return 0;
                     case 1:
                         String nome = in.readUTF();
                         String pass = in.readUTF();
-                        login = serverdb.checkuser(nome,pass);
-                        if(login==1) out.writeInt(1);
-                        else {out.writeInt(0);}
+                        login = serverdb.checkuser(nome, pass);
+                        if (login == 1) out.writeInt(1);
+                        else {
+                            out.writeInt(0);
+                        }
                         break;
                     case 2:
                         nome = in.readUTF();
                         pass = in.readUTF();
-                        out.writeInt(serverdb.novaConta(nome,pass));
+                        out.writeInt(serverdb.novaConta(nome, pass));
                         break;
 
                 }
+
             } catch (Exception e) {
+                return 0;
             }
+
         }
+        return 1;
     }
 }

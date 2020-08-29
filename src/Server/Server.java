@@ -36,8 +36,10 @@ public class Server {
                 /////////////////////////////////////////////// Login/registar
 
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
-                autenticacao.conexao();
+                int complete = autenticacao.conexao();
+                if(complete==0) return;
 
+                in.readInt();
                 ///////////////////////////////////////////////
 
             }
