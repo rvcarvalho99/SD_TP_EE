@@ -35,13 +35,17 @@ public class ServerDB {
 
     public ListadeMusicas getLista(String nome){return listas.get(nome);}
 
+    public int listaSize(){
+        return listas.size();
+    }
+
     public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);}
 
     public String listastoString(){
         String l2string="";
         int i=0;
         for (Map.Entry l : listas.entrySet()) {
-            l2string+=("Lista " + i + ": "+l.getKey()) + "\n" ;
+            l2string+=("Lista " + i + ": "+l.getKey()) + "«»";
             i++;
         }
         return l2string;

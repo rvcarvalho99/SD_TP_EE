@@ -25,7 +25,7 @@ public class ListadeMusicas {
     public String lista2String(){
         String l2string = "";
         for ( Musica m : musicas){
-            l2string+= m.musicInfo();
+            l2string+= m.musicInfo()+"--";
         }
         return l2string;
     }

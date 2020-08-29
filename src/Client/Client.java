@@ -8,8 +8,8 @@ public class Client {
 
         Socket socket = new Socket("127.0.0.1", 5000);
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        DataInputStream in = new DataInputStream(socket.getInputStream());
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
 
         boolean aux = true;
         while (aux) {
@@ -20,17 +20,17 @@ public class Client {
             String password;
             switch (option) {
                 case "1":
-                    out.writeInt(1);
+                    out.println(1);
                     System.out.println("Inserir username:");
                     username = input.readLine();
                     System.out.println("Inserir password:");
                     password = input.readLine();
-                    out.writeUTF(username);
-                    out.writeUTF(password);
-                    int serverResponseL = in.readInt();
+                    out.println(username);
+                    out.println(password);
+                    int serverResponseL = Integer.parseInt(in.readLine());
                     if (serverResponseL == 1) {
                         System.out.println("Login feito com sucesso");
-                        Menu menu = new Menu(input,in,out);
+                        Menu menu = new Menu(input,in,out,socket);
                         menu.show();
                     }
                     else {
@@ -38,14 +38,14 @@ public class Client {
                     }
                     break;
                 case "2":
-                    out.writeInt(2);
+                    out.println(2);
                     System.out.println("Inserir username:");
                     username = input.readLine();
                     System.out.println("Inserir password:");
                     password = input.readLine();
-                    out.writeUTF(username);
-                    out.writeUTF(password);
-                    int serverResponseR = in.readInt();
+                    out.println(username);
+                    out.println(password);
+                    int serverResponseR = Integer.parseInt(in.readLine());
                     if (serverResponseR == 1) {
                         System.out.println("Registo feito com sucesso");
                     }
@@ -54,7 +54,7 @@ public class Client {
                     }
                     break;
                 case "3":
-                    out.writeInt(-1);
+                    out.println(-1);
                     aux = false;
                     break;
             }

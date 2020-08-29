@@ -112,6 +112,16 @@ public class Model {
         }
     }
 
+    public int getListaSize(){
+        try{
+            listaslock.readLock();
+            return serverdb.listaSize();
+        }
+        finally {
+            listaslock.readUnlock();
+        }
+    }
+
     public String listasInfo(){
         listaslock.readUnlock();
         try {

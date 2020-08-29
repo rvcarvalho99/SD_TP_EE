@@ -1,8 +1,5 @@
 package Server;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -35,64 +32,72 @@ public class Server {
         public void run() {
 
             try {
-                DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-                DataInputStream in = new DataInputStream((conn.getInputStream()));
+                PrintWriter out = new PrintWriter(conn.getOutputStream(),true);
+                BufferedReader in =new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                 /////////////////////////////////////////////// Login/registar
                 Model model = new Model(serverdb);
-                Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
+                Autenticacao autenticacao = new Autenticacao(out,in,serverdb,conn);
                 String user = autenticacao.conexao(model);
                 if(user==null) return;
-
-                int read = in.readInt();
+                while (true){
+                int read = Integer.parseInt(in.readLine());
                 ///////////////////////////////////////////////
                 switch (read){
                     case 1:
                         System.out.println("Download");
-                        String plName = in.readUTF();
-                        int musicId = in.readInt();
+                        String plName = in.readLine();
+                        int musicId = Integer.parseInt(in.readLine());
                         String nomemusica = model.getMusicName(plName,musicId);
                         File f = model.download(plName,musicId);
                         ///////////
                         byte [] array = Files.readAllBytes(f.toPath());
-                        out.writeInt(array.length);
-                        out.write(array);
-                        out.writeUTF(nomemusica);
+                        out.println(array.length);
+                        DataOutputStream outFile = new DataOutputStream(conn.getOutputStream());
+                        outFile.write(array);
+                        outFile.close();
+                        out.println(nomemusica);
                         ///////
                         break;
                     case 2:
                         System.out.println("Upload");
-                        String nome_PL = in.readUTF();
+                        String nome_PL = in.readLine();
 
-                        int mId = in.readInt();
+                        int mId = Integer.parseInt(in.readLine());
                         if(!user.equals(model.getOwnerName(nome_PL))) {
-                            out.writeInt(0);
+                            out.println(0);
                             break;
                         }
-                        out.writeInt(1);
+                        out.println(1);
                         String nome_musica = model.getMusicName(nome_PL,mId);
-                        out.writeUTF(nome_musica);
+                        out.println(nome_musica);
                         //////
-                        byte bytearray[] = new byte[in.readInt()];
-                        in.readFully(bytearray);
+                        byte bytearray[] = new byte[Integer.parseInt(in.readLine())];
+                        DataInputStream inFile = new DataInputStream(conn.getInputStream());
+                        inFile.readFully(bytearray);
                         model.addFile(nome_PL,mId,bytearray);
                         ///////
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
-                        String nomePL = in.readUTF();
-                        int numeromusicas = in.readInt();
-                        ArrayList<Musica> musicas = new ArrayList<Musica>();
+                        String nomePL = in.readLine();System.out.println("b");
+                        int numeromusicas = Integer.parseInt(in.readLine());
+                        System.out.println("a");
+                        ArrayList<Musica> musicas = new ArrayList<Musica>();System.out.println("c");
                         for(int i= 1;i<=numeromusicas;i++){
-                            String titulo = in.readUTF();
-                            String autor = in.readUTF();
-                            int ano = in.readInt();
-                            Musica m = new Musica(titulo,autor,ano,i);
-                            musicas.add(i,m);
+                            System.out.println("d");
+                            String titulo = in.readLine();System.out.println("e");
+                            String autor = in.readLine();System.out.println("f");
+                            int ano = Integer.parseInt(in.readLine());System.out.println("g");
+                            Musica m = new Musica(titulo,autor,ano,i);System.out.println("h");
+                            musicas.add(m);System.out.println("i");
+                            System.out.println("11111111");
                         }
+                        System.out.println("2222222");
                         ListadeMusicas l = new ListadeMusicas(musicas, user);
                         serverdb.addLista(nomePL,l);
-                        out.writeInt(1);
+                        System.out.println("33333");
+                        out.println(1);
 
                         break;
                     case 4:
@@ -100,16 +105,18 @@ public class Server {
                         break;
                     case 5:
                         System.out.println("Ver PlayLists");
-                        out.writeUTF(model.listasInfo());
+                        out.println(model.listasInfo());
                         break;
                     case 6:
                         System.out.println("Ver PlayList");
-                        nomePL = in.readUTF();
-                        out.writeUTF(model.music2String(nomePL));
+                        nomePL = in.readLine();
+                        out.println(model.music2String(nomePL));
                         break;
                     case 7:
                         System.out.println("Alterar Password");
                         break;
+
+                }
 
                 }
             }

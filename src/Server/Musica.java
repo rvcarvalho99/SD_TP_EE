@@ -32,7 +32,7 @@ public class Musica {
     public  String getTitulo(){return titulo;}
 
     public String musicInfo(){
-        String info = "Título: "+ titulo + "\n Autor: "+ autor + "\n Ano: " + ano +"\n Id: " + id + "\n Número de downloads: " + descargas + " Disponibilidade: " + disponivel+ "\n";
+        String info = "Título: "+ titulo + " Autor: "+ autor + " Ano: " + ano +" Id: " + id + " Número de downloads: " + descargas + " Disponibilidade: " + disponivel;
         return info;
     }
 

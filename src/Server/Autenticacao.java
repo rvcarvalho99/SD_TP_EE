@@ -1,17 +1,21 @@
 package Server;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Autenticacao {
     private ServerDB serverdb;
-    private DataOutputStream out;
-    private DataInputStream in;
+    private PrintWriter out;
+    private BufferedReader in;
+    private Socket socket;
 
-    public Autenticacao(DataOutputStream o,DataInputStream i ,ServerDB server){
+    public Autenticacao(PrintWriter o, BufferedReader i , ServerDB server, Socket s){
         out=o;
         in=i;
         serverdb = server;
+        socket = s;
     }
 
     public String conexao(Model model){
@@ -19,7 +23,7 @@ public class Autenticacao {
         String c="";
         while(login==0) {
             try {
-                int received = in.readInt();
+                int received = Integer.parseInt(in.readLine());
                 String nome;
                 String pass;
                 switch (received) {
@@ -28,21 +32,21 @@ public class Autenticacao {
                         return "";
                     case 1:
                         System.out.println("login");
-                        nome = in.readUTF();
-                        pass = in.readUTF();
+                        nome = in.readLine();
+                        pass = in.readLine();
 
                         c = model.checkuser(nome, pass);
-                        if (!c.equals("")){login=1; out.writeInt(1);}
+                        if (!c.equals("")){login=1; out.println(1);}
                         else {
-                            out.writeInt(0);
+                            out.println(0);
                         }
                         break;
                     case 2:
                         System.out.println("registar");
-                        nome = in.readUTF();
-                        pass = in.readUTF();
+                        nome = in.readLine();
+                        pass = in.readLine();
                         System.out.println(1);
-                        out.writeInt(model.novaConta(nome, pass));
+                        out.println(model.novaConta(nome, pass));
                         System.out.println(2);
                         break;
 
