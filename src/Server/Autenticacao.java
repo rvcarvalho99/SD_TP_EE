@@ -14,8 +14,9 @@ public class Autenticacao {
         serverdb = server;
     }
 
-    public int conexao(){
+    public Conta conexao(Model model){
         int login=0;
+        Conta c=null;
         while(login==0) {
             try {
                 int received = in.readInt();
@@ -24,13 +25,14 @@ public class Autenticacao {
                 switch (received) {
                     case -1:
                         System.out.println("sair");
-                        return 0;
+                        return null;
                     case 1:
                         System.out.println("login");
                         nome = in.readUTF();
                         pass = in.readUTF();
-                        login = serverdb.checkuser(nome, pass);
-                        if (login == 1) out.writeInt(1);
+
+                        c = model.checkuser(nome, pass);
+                        if (c!=null){login=1; out.writeInt(1);}
                         else {
                             out.writeInt(0);
                         }
@@ -40,17 +42,17 @@ public class Autenticacao {
                         nome = in.readUTF();
                         pass = in.readUTF();
                         System.out.println(1);
-                        out.writeInt(serverdb.novaConta(nome, pass));
+                        out.writeInt(model.novaConta(nome, pass));
                         System.out.println(2);
                         break;
 
                 }
 
             } catch (Exception e) {
-                return 0;
+                return null;
             }
 
         }
-        return 1;
+        return c;
     }
 }

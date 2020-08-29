@@ -35,14 +35,36 @@ public class Server {
                 DataInputStream in = new DataInputStream((conn.getInputStream()));
 
                 /////////////////////////////////////////////// Login/registar
-
+                Model model = new Model(serverdb);
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
-                int complete = autenticacao.conexao();
-                if(complete==0) return;
+                Conta complete = autenticacao.conexao(model);
+                if(complete==null) return;
 
-                in.readInt();
+                int read = in.readInt();
                 ///////////////////////////////////////////////
-
+                switch (read){
+                    case 1:
+                        System.out.println("Download");
+                        break;
+                    case 2:
+                        System.out.println("Uplaod");
+                        break;
+                    case 3:
+                        System.out.println("Criar PlayList");
+                        break;
+                    case 4:
+                        System.out.println("Adicionar a PlayList");
+                        break;
+                    case 5:
+                        System.out.println("Ver PlayLists");
+                        break;
+                    case 6:
+                        System.out.println("Ver info de Musica");
+                        break;
+                    case 7:
+                        System.out.println("Alterar Password");
+                        break;
+                }
             }
             catch (Exception e){}
         }
