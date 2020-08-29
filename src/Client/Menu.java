@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Menu {
     private BufferedReader input;
@@ -40,10 +42,13 @@ public class Menu {
                 //try catch caso se faça merda no ano
                 int ano = Integer.parseInt(input.readLine());
                 out.writeInt(ano);
-
+                System.out.println(in.readInt());
                 System.out.println("Path:");
                 String path = input.readLine();
-
+                byte [] array = Files.readAllBytes(Paths.get(path+"\\" + titulo + ".mp3"));
+                out.writeInt(array.length);
+                out.write(array);
+                System.out.println("Upload realizado com sucesso");
                 //enviar o ficheiro
 
                 break;

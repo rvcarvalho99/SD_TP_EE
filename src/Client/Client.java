@@ -31,6 +31,7 @@ public class Client {
                     if (serverResponseL == 1) {
                         System.out.println("Login feito com sucesso");
                         Menu menu = new Menu(input,in,out);
+                        menu.show();
                     }
                     else {
                         System.out.println("Não foi possível fazer login");

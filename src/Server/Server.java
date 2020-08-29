@@ -52,10 +52,11 @@ public class Server {
                         String autor = in.readUTF();
                         int ano = in.readInt();
                         int id = model.novamusica(titulo,autor,ano);
-
-                        byte bytearray[] = new byte[in.readInt()];
-                        model.addFile(id,bytearray);
                         out.writeInt(id);
+                        byte bytearray[] = new byte[in.readInt()];
+                        in.readFully(bytearray);
+                        model.addFile(id,bytearray);
+
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
