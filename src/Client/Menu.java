@@ -69,14 +69,45 @@ public class Menu {
             case "3":
                 System.out.println("Criar PlayList");
                 out.writeInt(3);
+
+                String nomePlay = input.readLine();
+                out.writeUTF(nomePlay);
+
+                //try catch size incompatível
+                int sizePlay = Integer.parseInt(input.readLine());
+                out.writeInt(sizePlay);
+
+                for (int i=0; i<sizePlay; i++){
+                    System.out.println("Titulo:");
+                    String tituloP = input.readLine();
+                    out.writeUTF(tituloP);
+
+                    System.out.println("Artista:");
+                    String artistaP = input.readLine();
+                    out.writeUTF(artistaP);
+
+                    System.out.println("Ano:");
+                    //try catch caso se faça merda no ano
+                    int anoP = Integer.parseInt(input.readLine());
+                    out.writeInt(anoP);
+                    System.out.println(in.readInt());
+
+                    //perguntar se quer adicionar já o ficheiro
+                    //se quiser temos de pedir o path e eviar
+                }
+
+                if (in.readInt()==1)
+                    System.out.println("Playlist criada com sucesso");
+                else
+                    System.out.println("Não foi possível criar a playlist");
                 break;
             case "4":
                 System.out.println("Adicionar a PlayList");
                 out.writeInt(4);
 
                 System.out.println("Nome da PlayList");
-                String nomePlay = input.readLine();
-                out.writeUTF(nomePlay);
+                String nomeAP = input.readLine();
+                out.writeUTF(nomeAP);
 
                 break;
             case "5":
