@@ -9,8 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerDB {
     private ArrayList<Conta> contas;
     // ArrayList<Integer> idsremovidos;
-    private HashMap<String,HashMap<Integer,Musica>> listas;
-    private HashMap<Integer,Musica> musicas;
+    private HashMap<String, ListadeMusicas> listas;
     private ReentrantLock lock = new ReentrantLock();
 
     private Condition contasRead;
@@ -20,7 +19,7 @@ public class ServerDB {
 
     public ServerDB(){
         contas = new ArrayList<Conta>();
-        musicas = new HashMap<>();
+        listas = new HashMap<>();
     }
 
     ////////////////////// CONTA
@@ -35,26 +34,10 @@ public class ServerDB {
 
     /////////////////////// MUSICA
 
-    public HashMap<String,HashMap<Integer,Musica>> getLista(){return listas;}
+    public ListadeMusicas getLista(String nome){return listas.get(nome);}
 
-    public void addLista(String nome, HashMap<Integer,Musica> mus){listas.put(nome,mus);}
+    public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);}
 
-
-    public Musica getMusica(int id){
-        try {
-        return musicas.get(id);
-        }
-        catch (Exception e){return null;}
-    }
-
-    public int getMusicasSize(){
-        return musicas.size();
-    }
-
-    public int addMusica(int id, Musica m){
-        musicas.put(id,m);
-        return 1;
-    }
 
     public void lock(){
         this.lock.lock();

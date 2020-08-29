@@ -49,9 +49,10 @@ public class Server {
                 switch (read){
                     case 1:
                         System.out.println("Download");
+                        String plName = in.readUTF();
                         int musicId = in.readInt();
-                        String nomemusica = model.getMusicName(musicId);
-                        File f = model.download(musicId);
+                        String nomemusica = model.getMusicName(plName,musicId);
+                        File f = model.download(plName,musicId);
                         byte [] array = Files.readAllBytes(f.toPath());
                         out.writeInt(array.length);
                         out.write(array);
@@ -59,28 +60,32 @@ public class Server {
                         break;
                     case 2:
                         System.out.println("Upload");
-                        String titulo = in.readUTF();
-                        String autor = in.readUTF();
-                        int ano = in.readInt();
-                        int id = model.novamusica(titulo,autor,ano);
-                        out.writeInt(id);
+                        String nome_PL = in.readUTF();
+                        int mId = in.readInt();
+                        String nome_musica = model.getMusicName(nome_PL,mId);
+                        out.writeUTF(nome_musica);
                         byte bytearray[] = new byte[in.readInt()];
                         in.readFully(bytearray);
-                        model.addFile(id,bytearray);
+                        model.addFile(nome_PL,mId,bytearray);
 
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
                         String nomePL = in.readUTF();
                         int numeromusicas = in.readInt();
-                        HashMap<Integer,Musica> musicas = new HashMap<Integer, Musica>();
+                        ArrayList<Musica> musicas = new ArrayList<Musica>();
                         for(int i= 1;i<=numeromusicas;i++){
-                            titulo = in.readUTF();
-                            autor = in.readUTF();
-                            ano = in.readInt();
+                            String titulo = in.readUTF();
+                            String autor = in.readUTF();
+                            int ano = in.readInt();
                             Musica m = new Musica(titulo,autor,ano,i);
-                            musicas.put(i,m);
+                            musicas.add(i,m);
                         }
+                        ListadeMusicas l = new ListadeMusicas(musicas);
+                        serverdb.lock();
+                        serverdb.addLista(nomePL,l);
+                        serverdb.unlock();
+                        out.writeInt(1);
 
                         break;
                     case 4:

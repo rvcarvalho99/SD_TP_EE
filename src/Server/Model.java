@@ -54,14 +54,14 @@ public class Model {
     ////////////////////////////////////////// Musicas
 
 
-    public int novaLista(String nome, HashMap<Integer,Musica> musicas){
+    public int novaLista(String nome, ListadeMusicas musicas){
         serverdb.lock();
         serverdb.addLista(nome,musicas);
         serverdb.unlock();
         return 1;
     }
 
-    public int novamusica(String t, String au, int an){
+    /*public int novamusica(String t, String au, int an){
         serverdb.lock();
         int size = serverdb.getMusicasSize();
         Musica c = new Musica(t,au,an,size+1);
@@ -69,10 +69,12 @@ public class Model {
         serverdb.addMusica(size+1,c);
         serverdb.unlock();
         return c.getId();
-    }
-    public int addFile(int id, byte[] bytearray){
+    }*/
+    public int addFile(String nomePL, int id, byte[] bytearray){
         try{
-            Musica musica = serverdb.getMusica(id);
+            ListadeMusicas m = serverdb.getLista(nomePL);
+            Musica musica = m.getMusica(id);
+            musica.lock();
             String nome =  musica.getTitulo();
             File n = new File(nome+".mp3");
             FileOutputStream fos = new FileOutputStream(n);
@@ -84,18 +86,21 @@ public class Model {
         return 0;
     }
 
-    public String getMusicName(int id){
-        Musica m = serverdb.getMusica(id);
-        return m.getTitulo();
+    public String getMusicName(String nomePL, int id){
+
+        ListadeMusicas m = serverdb.getLista(nomePL);
+        Musica musica = m.getMusica(id);
+        return musica.getTitulo();
     }
 
-    public String musicInfo(int x){
+    /*public String musicInfo(int x){
         Musica m = serverdb.getMusica(x);
         return m.musicInfo();
-    }
+    }*/
 
-    public File download(int x){
-        Musica m = serverdb.getMusica(x);
-        return m.download();
+    public File download(String nomePL,int id){
+        ListadeMusicas m = serverdb.getLista(nomePL);
+        Musica musica = m.getMusica(id);
+        return musica.download();
     }
 }
