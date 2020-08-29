@@ -8,6 +8,8 @@ public class RWLock {
     private int writers;
     private int writeRequests;
     private int readRequests;
+    private int readersConsecutive;
+    private int writersConsecutive;
     private ReentrantLock rl;
     private Condition waitReaders;
     private Condition waitWriters;
@@ -17,6 +19,8 @@ public class RWLock {
         this.writers = 0;
         this.writeRequests = 0;
         this.readRequests = 0;
+        this.readersConsecutive=0;
+        this.writersConsecutive=0;
         this.rl = new ReentrantLock();
         this.waitReaders = this.rl.newCondition();
         this.waitWriters = this.rl.newCondition();
@@ -26,11 +30,13 @@ public class RWLock {
         this.rl.lock();
         try {
             this.readRequests++;
-            while (this.writers > 0) {
+            while (this.writers > 0|| (this.writeRequests > 0 && this.readersConsecutive > 5)) {
                 this.waitReaders.await();
             }
             this.readRequests--;
         } catch (InterruptedException ie) {}
+        this.writersConsecutive = 0;
+        this.readersConsecutive++;
         this.readers++;
         this.rl.unlock();
     }
@@ -39,11 +45,13 @@ public class RWLock {
         this.rl.lock();
         try {
             this.writeRequests++;
-            while (this.writers > 0 || this.readers > 0) {
+            while (this.writers > 0 || this.readers > 0 || (this.readRequests > 0 && this.writersConsecutive > 5)) {
                 this.waitWriters.await();
             }
             this.writeRequests--;
         } catch (InterruptedException ie) {}
+        this.readersConsecutive = 0; // COMBO BREAK
+        this.writersConsecutive++;
         this.writers++;
         this.rl.unlock();
     }
@@ -52,7 +60,7 @@ public class RWLock {
         this.rl.lock();
         this.readers--;
         if (this.readers == 0) {
-            this.waitWriters.signal();
+            this.waitWriters.signalAll();
         }
         this.rl.unlock();
     }
@@ -60,9 +68,8 @@ public class RWLock {
     public void writeUnlock() {
         this.rl.lock();
         this.writers--;
-        if (this.writers == 0) {
-            this.waitWriters.signal();
-        }
+        this.waitReaders.signalAll();
+        this.waitWriters.signalAll();
         this.rl.unlock();
     }
 }

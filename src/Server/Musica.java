@@ -36,6 +36,10 @@ public class Musica {
         return info;
     }
 
+    public boolean getdisponivel(){
+        return disponivel;
+    }
+
     public void setDisponivel(boolean disp){
         disponivel=disp;
     }

@@ -41,7 +41,7 @@ public class Server {
                 /////////////////////////////////////////////// Login/registar
                 Model model = new Model(serverdb);
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
-                Conta user = autenticacao.conexao(model);
+                String user = autenticacao.conexao(model);
                 if(user==null) return;
 
                 int read = in.readInt();
@@ -53,27 +53,30 @@ public class Server {
                         int musicId = in.readInt();
                         String nomemusica = model.getMusicName(plName,musicId);
                         File f = model.download(plName,musicId);
+                        ///////////
                         byte [] array = Files.readAllBytes(f.toPath());
                         out.writeInt(array.length);
                         out.write(array);
                         out.writeUTF(nomemusica);
+                        ///////
                         break;
                     case 2:
                         System.out.println("Upload");
                         String nome_PL = in.readUTF();
 
                         int mId = in.readInt();
-                        if(!user.getName().equals(model.getOwnerName(nome_PL))) {
+                        if(!user.equals(model.getOwnerName(nome_PL))) {
                             out.writeInt(0);
                             break;
                         }
                         out.writeInt(1);
                         String nome_musica = model.getMusicName(nome_PL,mId);
                         out.writeUTF(nome_musica);
+                        //////
                         byte bytearray[] = new byte[in.readInt()];
                         in.readFully(bytearray);
                         model.addFile(nome_PL,mId,bytearray);
-
+                        ///////
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
@@ -87,10 +90,8 @@ public class Server {
                             Musica m = new Musica(titulo,autor,ano,i);
                             musicas.add(i,m);
                         }
-                        ListadeMusicas l = new ListadeMusicas(musicas, user.getName());
-                        serverdb.lock();
+                        ListadeMusicas l = new ListadeMusicas(musicas, user);
                         serverdb.addLista(nomePL,l);
-                        serverdb.unlock();
                         out.writeInt(1);
 
                         break;

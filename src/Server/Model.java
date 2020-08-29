@@ -1,5 +1,7 @@
 package Server;
 
+import com.sun.org.apache.bcel.internal.generic.RET;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -8,43 +10,45 @@ import java.util.HashMap;
 public class Model {
 
     ServerDB serverdb;
-
+    RWLock listaslock;
+    RWLock contaslock;
     public Model(ServerDB s){
+        contaslock = new RWLock();
+        listaslock = new RWLock();
         serverdb=s;
+
     }
 
     /////////////////////////////////////////// Contas
 
     public int novaConta(String nome,String pass){
-        serverdb.lock();
-        ArrayList<Conta> contas = serverdb.getContas();
-        for(Conta c : contas)
-        {
-            if(c.getName().equals(nome)){
-                serverdb.unlock();
-                return 0;
-            }
-        }
-        Conta c = new Conta(nome,pass);
 
-        serverdb.addConta(c);
-        serverdb.unlock();
+        contaslock.writeLock();
+        HashMap<String,String> contas = serverdb.getContas();
+        if(contas.containsKey(nome))
+        {
+            contaslock.writeUnlock();
+            return 0;
+        }
+        serverdb.addConta(nome,pass);
+        contaslock.writeUnlock();
         return 1;
     }
 
-    public Conta checkuser(String nome, String pass){
-
-        serverdb.lock();
-        ArrayList<Conta> contas = serverdb.getContas();
-        for(Conta c : contas)
+    public String checkuser(String nome, String pass){
+        contaslock.readLock();
+        HashMap<String,String> contas = serverdb.getContas();
+        if(contas.containsKey(nome))
         {
-            if(c.checkuserinfo(nome,pass)){
-                serverdb.unlock();
-                return c;
+            if(contas.get(nome).equals(pass)){
+                contaslock.readUnlock();
+                return nome;
             }
+            contaslock.readUnlock();
+            return "";
         }
-        serverdb.unlock();
-        return null;
+        contaslock.readUnlock();
+        return "";
     }
 
 
@@ -55,15 +59,16 @@ public class Model {
 
 
     public int novaLista(String nome, ListadeMusicas musicas){
-        serverdb.lock();
+        listaslock.writeLock();
         serverdb.addLista(nome,musicas);
-        serverdb.unlock();
+        listaslock.writeUnlock();
         return 1;
     }
 
 
     public int addFile(String nomePL, int id, byte[] bytearray){
         try{
+            listaslock.writeLock();
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             musica.lock();
@@ -74,38 +79,72 @@ public class Model {
             fos.close();
             musica.setDisponivel(true);
             musica.unlock();
+            listaslock.writeUnlock();
+            return 1;
         }
         catch (Exception e){}
         return 0;
     }
 
     public String getMusicName(String nomePL, int id){
-
+        listaslock.readLock();
         ListadeMusicas m = serverdb.getLista(nomePL);
-        Musica musica = m.getMusica(id);
-        return musica.getTitulo();
+        listaslock.writeUnlock();
+        try {
+            Musica musica = m.getMusica(id);
+
+            return musica.getTitulo();
+        }
+        finally {
+            listaslock.readUnlock();
+        }
     }
 
     public String getOwnerName(String nomePL ) {
 
-        ListadeMusicas m = serverdb.getLista(nomePL);
-        return m.getName();
+        try{
+            listaslock.readLock();
+            ListadeMusicas m = serverdb.getLista(nomePL);
+            return m.getName();
+        }
+        finally {
+            listaslock.readUnlock();
+        }
     }
 
     public String listasInfo(){
-
-        return serverdb.listastoString();
+        listaslock.readUnlock();
+        try {
+            return serverdb.listastoString();
+        }
+        finally {
+            listaslock.readUnlock();
+        }
     }
 
     public String music2String(String nome){
-        ListadeMusicas m = serverdb.getLista(nome);
-        return m.lista2String();
+        try {
+            listaslock.readLock();
+            ListadeMusicas m = serverdb.getLista(nome);
+            return m.lista2String();
+        }
+        finally {
+            listaslock.readUnlock();
+        }
     }
 
     public File download(String nomePL,int id){
-
-        ListadeMusicas m = serverdb.getLista(nomePL);
-        Musica musica = m.getMusica(id);
-        return musica.download();
+        try {
+            listaslock.readLock();
+            ListadeMusicas m = serverdb.getLista(nomePL);
+            Musica musica = m.getMusica(id);
+            musica.lock();
+            if(musica.getdisponivel())
+            return musica.download();
+            return null;
+        }
+        finally {
+            listaslock.readUnlock();
+        }
     }
 }

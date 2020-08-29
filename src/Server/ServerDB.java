@@ -8,29 +8,27 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerDB {
-    private ArrayList<Conta> contas;
-    // ArrayList<Integer> idsremovidos;
-    private HashMap<String, ListadeMusicas> listas;
-    private ReentrantLock lock = new ReentrantLock();
 
-    private Condition contasRead;
-    private Condition contasWrite;
-    private Condition musicascondition;
+    RWLock lock;
+    private HashMap<String,String> contas;
+    private HashMap<String, ListadeMusicas> listas;
+
 
 
     public ServerDB(){
-        contas = new ArrayList<Conta>();
+        lock = new RWLock();
+        contas = new HashMap<>();
         listas = new HashMap<>();
     }
 
     ////////////////////// CONTA
 
-    public ArrayList<Conta> getContas(){
+    public HashMap<String,String> getContas(){
         return contas;
     }
 
-    public void addConta(Conta c){
-        contas.add(c);
+    public void addConta(String nome, String pass){
+        contas.put(nome,pass);
     }
 
     /////////////////////// MUSICA
@@ -50,13 +48,5 @@ public class ServerDB {
     }
 
 
-
-    public void lock(){
-        this.lock.lock();
-    }
-
-    public void unlock(){
-        this.lock.unlock();
-    }
 
 }
