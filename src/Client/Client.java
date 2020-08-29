@@ -34,9 +34,11 @@ public class Client {
                     }
                     break;
                 case "2":
+                    System.out.println("chapeu");
                     out.writeInt(2);
-
+                    System.out.println("chapeu2");
                     int serverResponseR = in.readInt();
+                    System.out.println("chapeu3");
                     if (serverResponseR == 1) {
                         System.out.println("Registo feito com sucesso");
                     }
