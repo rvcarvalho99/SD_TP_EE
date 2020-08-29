@@ -41,8 +41,8 @@ public class Server {
                 /////////////////////////////////////////////// Login/registar
                 Model model = new Model(serverdb);
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
-                Conta complete = autenticacao.conexao(model);
-                if(complete==null) return;
+                Conta user = autenticacao.conexao(model);
+                if(user==null) return;
 
                 int read = in.readInt();
                 ///////////////////////////////////////////////
@@ -61,7 +61,13 @@ public class Server {
                     case 2:
                         System.out.println("Upload");
                         String nome_PL = in.readUTF();
+
                         int mId = in.readInt();
+                        if(!user.getName().equals(model.getOwnerName(nome_PL))) {
+                            out.writeInt(0);
+                            break;
+                        }
+                        out.writeInt(1);
                         String nome_musica = model.getMusicName(nome_PL,mId);
                         out.writeUTF(nome_musica);
                         byte bytearray[] = new byte[in.readInt()];
@@ -81,7 +87,7 @@ public class Server {
                             Musica m = new Musica(titulo,autor,ano,i);
                             musicas.add(i,m);
                         }
-                        ListadeMusicas l = new ListadeMusicas(musicas);
+                        ListadeMusicas l = new ListadeMusicas(musicas, user.getName());
                         serverdb.lock();
                         serverdb.addLista(nomePL,l);
                         serverdb.unlock();
@@ -93,13 +99,17 @@ public class Server {
                         break;
                     case 5:
                         System.out.println("Ver PlayLists");
+                        out.writeUTF(model.listasInfo());
                         break;
                     case 6:
-                        System.out.println("Ver info de Musica");
+                        System.out.println("Ver PlayList");
+                        nomePL = in.readUTF();
+                        out.writeUTF(model.music2String(nomePL));
                         break;
                     case 7:
                         System.out.println("Alterar Password");
                         break;
+
                 }
             }
             catch (Exception e){}

@@ -61,15 +61,7 @@ public class Model {
         return 1;
     }
 
-    /*public int novamusica(String t, String au, int an){
-        serverdb.lock();
-        int size = serverdb.getMusicasSize();
-        Musica c = new Musica(t,au,an,size+1);
-        c.lock();
-        serverdb.addMusica(size+1,c);
-        serverdb.unlock();
-        return c.getId();
-    }*/
+
     public int addFile(String nomePL, int id, byte[] bytearray){
         try{
             ListadeMusicas m = serverdb.getLista(nomePL);
@@ -80,6 +72,7 @@ public class Model {
             FileOutputStream fos = new FileOutputStream(n);
             fos.write(bytearray);
             fos.close();
+            musica.setDisponivel(true);
             musica.unlock();
         }
         catch (Exception e){}
@@ -93,12 +86,24 @@ public class Model {
         return musica.getTitulo();
     }
 
-    /*public String musicInfo(int x){
-        Musica m = serverdb.getMusica(x);
-        return m.musicInfo();
-    }*/
+    public String getOwnerName(String nomePL ) {
+
+        ListadeMusicas m = serverdb.getLista(nomePL);
+        return m.getName();
+    }
+
+    public String listasInfo(){
+
+        return serverdb.listastoString();
+    }
+
+    public String music2String(String nome){
+        ListadeMusicas m = serverdb.getLista(nome);
+        return m.lista2String();
+    }
 
     public File download(String nomePL,int id){
+
         ListadeMusicas m = serverdb.getLista(nomePL);
         Musica musica = m.getMusica(id);
         return musica.download();
