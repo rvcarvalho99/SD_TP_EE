@@ -48,10 +48,12 @@ public class Server {
                     case 1:
                         System.out.println("Download");
                         int musicId = in.readInt();
+                        String nomemusica = model.getMusicName(musicId);
                         File f = model.download(musicId);
                         byte [] array = Files.readAllBytes(f.toPath());
                         out.writeInt(array.length);
                         out.write(array);
+                        out.writeUTF(nomemusica);
                         break;
                     case 2:
                         System.out.println("Upload");

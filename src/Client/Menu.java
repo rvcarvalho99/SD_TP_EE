@@ -1,9 +1,6 @@
 package Client;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -30,11 +27,17 @@ public class Menu {
                 System.out.println("ID da música");
                 int idMusica = Integer.parseInt(input.readLine());
                 out.writeInt(idMusica);
-
-                System.out.println("Path para onde quer guardar o ficheiro");
-                String path = input.readLine();
-
                 int size = in.readInt();
+                byte bytearray[] = new byte[size];
+                in.readFully(bytearray);
+                String nomemusica = in.readUTF();
+                System.out.println("Path para onde quer guardar o ficheiro");
+                String caminho = input.readLine();
+
+                File n = new File(caminho+ "//"+nomemusica+".mp3");
+                FileOutputStream fos = new FileOutputStream(n);
+                fos.write(bytearray);
+                fos.close();
 
                 break;
             case "2":

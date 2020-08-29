@@ -75,6 +75,11 @@ public class Model {
         return 0;
     }
 
+    public String getMusicName(int id){
+        Musica m = serverdb.getMusica(id);
+        return m.getTitulo();
+    }
+
     public String musicInfo(int x){
         Musica m = serverdb.getMusica(x);
         return m.musicInfo();
