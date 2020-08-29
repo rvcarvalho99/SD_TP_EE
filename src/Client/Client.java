@@ -65,6 +65,5 @@ public class Client {
         socket.shutdownInput();
         socket.shutdownOutput();
         socket.close();
-
     }
 }

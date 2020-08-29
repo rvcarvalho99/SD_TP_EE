@@ -23,6 +23,10 @@ public class Menu {
                 System.out.println("Download");
                 out.writeInt(1);
 
+                System.out.println("Nome playlist:");
+                String nomeP = input.readLine();
+                out.writeUTF(nomeP);
+
                 //try catch e exceptions como musicaInexistente
                 System.out.println("ID da música");
                 int idMusica = Integer.parseInt(input.readLine());
@@ -44,21 +48,19 @@ public class Menu {
                 System.out.println("Upload");
                 out.writeInt(2);
 
-                System.out.println("Titulo:");
-                String titulo = input.readLine();
-                out.writeUTF(titulo);
+                System.out.println("Nome playlist:");
+                String nomeUP = input.readLine();
+                out.writeUTF(nomeUP);
 
-                System.out.println("Artista:");
-                String artista = input.readLine();
-                out.writeUTF(artista);
+                System.out.println("ID Musica:");
+                //try catch
+                int idM = Integer.parseInt(input.readLine());
+                out.writeInt(idM);
 
-                System.out.println("Ano:");
-                //try catch caso se faça merda no ano
-                int ano = Integer.parseInt(input.readLine());
-                out.writeInt(ano);
-                System.out.println(in.readInt());
+                String titulo = in.readUTF();
                 System.out.println("Path:");
                 String path = input.readLine();
+
                 byte [] array = Files.readAllBytes(Paths.get(path+"\\" + titulo + ".mp3"));
                 out.writeInt(array.length);
                 out.write(array);
