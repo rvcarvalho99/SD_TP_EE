@@ -19,7 +19,7 @@ public class Menu {
     String read = input.readLine();
         ///////////////////////////////////////////////
         switch (read){
-            case "1":
+            case "1": //tá
                 System.out.println("Download");
                 out.writeInt(1);
 
@@ -44,7 +44,7 @@ public class Menu {
                 fos.close();
 
                 break;
-            case "2":
+            case "2": //tá
                 System.out.println("Upload");
                 out.writeInt(2);
 
@@ -57,18 +57,21 @@ public class Menu {
                 int idM = Integer.parseInt(input.readLine());
                 out.writeInt(idM);
 
-                String titulo = in.readUTF();
-                System.out.println("Path:");
-                String path = input.readLine();
+                int sucesso = Integer.parseInt(in.readUTF());
+                if (sucesso == 0)
+                    System.out.println("Não tem permissão para fazer upload nesta lista");
+                else {
+                    String titulo = in.readUTF();
+                    System.out.println("Path:");
+                    String path = input.readLine();
 
-                byte [] array = Files.readAllBytes(Paths.get(path+"\\" + titulo + ".mp3"));
-                out.writeInt(array.length);
-                out.write(array);
-                System.out.println("Upload realizado com sucesso");
-                //enviar o ficheiro
-
+                    byte [] array = Files.readAllBytes(Paths.get(path+"\\" + titulo + ".mp3"));
+                    out.writeInt(array.length);
+                    out.write(array);
+                    System.out.println("Upload realizado com sucesso");
+                }
                 break;
-            case "3":
+            case "3": //tá
                 System.out.println("Criar PlayList");
                 out.writeInt(3);
 
@@ -103,7 +106,7 @@ public class Menu {
                 else
                     System.out.println("Não foi possível criar a playlist");
                 break;
-            case "4":
+            case "4": //ainda não está
                 System.out.println("Adicionar a PlayList");
                 out.writeInt(4);
 
@@ -111,14 +114,24 @@ public class Menu {
                 String nomeAP = input.readLine();
                 out.writeUTF(nomeAP);
 
+               /* if (in.readInt()==1)
+                    System.out.println();*/
+
                 break;
-            case "5":
+            case "5": //tá
                 System.out.println("Ver PlayLists");
                 out.writeInt(5);
+
+                System.out.println(in.readUTF());
                 break;
             case "6":
+                System.out.println("Ver Playlist");
                 out.writeInt(6);
-                System.out.println("Ver info de Musica");
+
+                System.out.println("Nome da playlist");
+                out.writeUTF(input.readLine());
+
+                System.out.println(in.readUTF());
                 break;
             case "7":
                 out.writeInt(7);
