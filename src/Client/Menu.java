@@ -25,6 +25,17 @@ public class Menu {
             case "1":
                 System.out.println("Download");
                 out.writeInt(1);
+
+                //try catch e exceptions como musicaInexistente
+                System.out.println("ID da música");
+                int idMusica = Integer.parseInt(input.readLine());
+                out.writeInt(idMusica);
+
+                System.out.println("Path para onde quer guardar o ficheiro");
+                String path = input.readLine();
+
+                int size = in.readInt();
+
                 break;
             case "2":
                 System.out.println("Upload");
