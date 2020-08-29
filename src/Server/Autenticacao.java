@@ -19,13 +19,16 @@ public class Autenticacao {
         while(login==0) {
             try {
                 int received = in.readInt();
-
+                String nome;
+                String pass;
                 switch (received) {
                     case -1:
+                        System.out.println("sair");
                         return 0;
                     case 1:
-                        String nome = in.readUTF();
-                        String pass = in.readUTF();
+                        System.out.println("login");
+                        nome = in.readUTF();
+                        pass = in.readUTF();
                         login = serverdb.checkuser(nome, pass);
                         if (login == 1) out.writeInt(1);
                         else {
@@ -33,9 +36,12 @@ public class Autenticacao {
                         }
                         break;
                     case 2:
+                        System.out.println("registar");
                         nome = in.readUTF();
                         pass = in.readUTF();
+                        System.out.println(1);
                         out.writeInt(serverdb.novaConta(nome, pass));
+                        System.out.println(2);
                         break;
 
                 }

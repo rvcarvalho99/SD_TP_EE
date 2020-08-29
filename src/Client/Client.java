@@ -16,13 +16,15 @@ public class Client {
             System.out.println("Hello there");
             System.out.println("1-login 2-registar 3-quit");
             String  option = input.readLine();
+            String username;
+            String password;
             switch (option) {
                 case "1":
                     out.writeInt(1);
                     System.out.println("Inserir username:");
-                    String username = input.readLine();
+                    username = input.readLine();
                     System.out.println("Inserir password:");
-                    String password = input.readLine();
+                    password = input.readLine();
                     out.writeUTF(username);
                     out.writeUTF(password);
                     int serverResponseL = in.readInt();
@@ -34,11 +36,14 @@ public class Client {
                     }
                     break;
                 case "2":
-                    System.out.println("chapeu");
                     out.writeInt(2);
-                    System.out.println("chapeu2");
+                    System.out.println("Inserir username:");
+                    username = input.readLine();
+                    System.out.println("Inserir password:");
+                    password = input.readLine();
+                    out.writeUTF(username);
+                    out.writeUTF(password);
                     int serverResponseR = in.readInt();
-                    System.out.println("chapeu3");
                     if (serverResponseR == 1) {
                         System.out.println("Registo feito com sucesso");
                     }
