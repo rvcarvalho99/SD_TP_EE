@@ -1,9 +1,11 @@
 package Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
 
 public class Server {
 
@@ -45,6 +47,11 @@ public class Server {
                 switch (read){
                     case 1:
                         System.out.println("Download");
+                        int musicId = in.readInt();
+                        File f = model.download(musicId);
+                        byte [] array = Files.readAllBytes(f.toPath());
+                        out.writeInt(array.length);
+                        out.write(array);
                         break;
                     case 2:
                         System.out.println("Upload");
