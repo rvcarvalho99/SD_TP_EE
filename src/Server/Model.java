@@ -3,6 +3,7 @@ package Server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Model {
 
@@ -52,11 +53,19 @@ public class Model {
 
     ////////////////////////////////////////// Musicas
 
+
+    public int novaLista(String nome, HashMap<Integer,Musica> musicas){
+        serverdb.lock();
+        serverdb.addLista(nome,musicas);
+        serverdb.unlock();
+        return 1;
+    }
+
     public int novamusica(String t, String au, int an){
         serverdb.lock();
         int size = serverdb.getMusicasSize();
         Musica c = new Musica(t,au,an,size+1);
-
+        c.lock();
         serverdb.addMusica(size+1,c);
         serverdb.unlock();
         return c.getId();
@@ -69,7 +78,7 @@ public class Model {
             FileOutputStream fos = new FileOutputStream(n);
             fos.write(bytearray);
             fos.close();
-
+            musica.unlock();
         }
         catch (Exception e){}
         return 0;

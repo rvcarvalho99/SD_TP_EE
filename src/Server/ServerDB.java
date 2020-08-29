@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerDB {
     private ArrayList<Conta> contas;
     // ArrayList<Integer> idsremovidos;
+    private HashMap<String,HashMap<Integer,Musica>> listas;
     private HashMap<Integer,Musica> musicas;
     private ReentrantLock lock = new ReentrantLock();
 
@@ -34,7 +35,9 @@ public class ServerDB {
 
     /////////////////////// MUSICA
 
+    public HashMap<String,HashMap<Integer,Musica>> getLista(){return listas;}
 
+    public void addLista(String nome, HashMap<Integer,Musica> mus){listas.put(nome,mus);}
 
 
     public Musica getMusica(int id){

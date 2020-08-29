@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Server {
 
@@ -69,6 +71,17 @@ public class Server {
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
+                        String nomePL = in.readUTF();
+                        int numeromusicas = in.readInt();
+                        HashMap<Integer,Musica> musicas = new HashMap<Integer, Musica>();
+                        for(int i= 1;i<=numeromusicas;i++){
+                            titulo = in.readUTF();
+                            autor = in.readUTF();
+                            ano = in.readInt();
+                            Musica m = new Musica(titulo,autor,ano,i);
+                            musicas.put(i,m);
+                        }
+
                         break;
                     case 4:
                         System.out.println("Adicionar a PlayList");
