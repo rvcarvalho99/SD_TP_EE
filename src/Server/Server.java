@@ -47,7 +47,15 @@ public class Server {
                         System.out.println("Download");
                         break;
                     case 2:
-                        System.out.println("Uplaod");
+                        System.out.println("Upload");
+                        String titulo = in.readUTF();
+                        String autor = in.readUTF();
+                        int ano = in.readInt();
+                        int id = model.novamusica(titulo,autor,ano);
+
+                        byte bytearray[] = new byte[in.readInt()];
+                        model.addFile(id,bytearray);
+                        out.writeInt(id);
                         break;
                     case 3:
                         System.out.println("Criar PlayList");

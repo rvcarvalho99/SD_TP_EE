@@ -52,10 +52,10 @@ public class Model {
 
     ////////////////////////////////////////// Musicas
 
-    public int novamusica(String t, String au, String an, ArrayList<String> et){
+    public int novamusica(String t, String au, int an){
         serverdb.lock();
         int size = serverdb.getMusicasSize();
-        Musica c = new Musica(t,au,an,et,size+1);
+        Musica c = new Musica(t,au,an,size+1);
 
         serverdb.addMusica(size+1,c);
         serverdb.unlock();

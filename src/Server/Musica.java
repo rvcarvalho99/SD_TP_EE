@@ -8,19 +8,20 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Musica {
     private String titulo;
     private String autor;
-    private String ano;
+    private int ano;
     //private ArrayList <String> etiquetas= new ArrayList<String>();
     private ReentrantLock lock = new ReentrantLock();
     private int id;
-    private int descargas=0;
+    private int descargas;
 
-    public Musica(String t,String au, String an,ArrayList<String> et,int i){
+    public Musica(String t,String au, int an,int i){
         try{
 
             titulo = t;
             autor = au ;
             ano = an;
             id=i;
+            descargas=0;
         }
         catch (Exception e){}
     }
