@@ -59,6 +59,11 @@ public class Menu {
             case "4":
                 System.out.println("Adicionar a PlayList");
                 out.writeInt(4);
+
+                System.out.println("Nome da PlayList");
+                String nomePlay = input.readLine();
+                out.writeUTF(nomePlay);
+
                 break;
             case "5":
                 System.out.println("Ver PlayLists");
@@ -70,8 +75,21 @@ public class Menu {
                 break;
             case "7":
                 out.writeInt(7);
-                System.out.println("Alterar Password");
 
+                System.out.println("Alterar Password");
+                String newPassword = input.readLine();
+                System.out.println("Coloque novamente a nova password");
+                String newPasswordConf = input.readLine();
+                while (!newPassword.equals(newPasswordConf)){
+                    System.out.println("Palavra passe errada coloque de novo");
+                    newPassword = input.readLine();
+                    System.out.println("Coloque novamente a nova password");
+                    newPasswordConf = input.readLine();
+                }
+                out.writeUTF(newPassword);
+                if (in.readInt() == 1)
+                    System.out.println("Sucesso");
+                else System.out.println("Insucesso");
                 break;
         }
     }
