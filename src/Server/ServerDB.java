@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerDB {
 
-    RWLock lock;
+
     private HashMap<String,String> contas;
     private HashMap<String, ListadeMusicas> listas;
     private HashMap<Integer,Notificador> notificacoes;
@@ -17,7 +17,6 @@ public class ServerDB {
 
     public ServerDB(){
         notificacoes = new HashMap<Integer, Notificador>();
-        lock = new RWLock();
         contas = new HashMap<>();
         listas = new HashMap<>();
     }
@@ -47,6 +46,7 @@ public class ServerDB {
     public HashMap<Integer,Notificador> getNotificacoes(){
         return notificacoes;
     }
+
 
     public void setNotificacoes(HashMap<Integer,Notificador> n){
         notificacoes = n;

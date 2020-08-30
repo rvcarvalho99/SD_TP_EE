@@ -10,12 +10,13 @@ import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.lang.Thread.sleep;
+
 public class Model {
 
     ServerDB serverdb;
     RWLock listaslock;
     RWLock contaslock;
-    RWLock musiclock;
     RWLock notificacoeslock;
     ReentrantLock lock;
     Condition musiccondition;
@@ -27,7 +28,6 @@ public class Model {
         listaslock = new RWLock();
         notificacoeslock = new RWLock();
         serverdb=s;
-        musiclock = new RWLock();
     }
 
     /////////////////////////////////////////// Contas
@@ -79,18 +79,17 @@ public class Model {
 
     public int addFile(String nomePL, int id ){
         try{
-            lock.lock();
-            listaslock.writeLock();System.out.println("1ad");
+            listaslock.writeLock();
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             musica.lock();
             musica.setDisponivel(true);
-            musica.unlock();System.out.println("2ad");
-
-            listaslock.writeUnlock();System.out.println("2.5ad");
-            musiccondition.signalAll();System.out.println("3ad");
-            //musiccondition.notifyAll();
-            lock.unlock();System.out.println("4ad");
+            lock.lock();
+            musiccondition.signalAll();
+            lock.unlock();
+            listaslock.writeUnlock();
+            musica.unlock();
+            notificador("PlayList: " + nomePL + " Music id: " + id);
             return 1;
         }
         catch (Exception ie){System.out.println(ie);}
@@ -98,18 +97,21 @@ public class Model {
     }
 
     public void notificador(String message){
+        System.out.println("n1");
         notificacoeslock.readLock();
         HashMap<Integer,Notificador> notificador = serverdb.getNotificacoes();
-
+        System.out.println("n2");
         for(Integer n : notificador.keySet()){
             if(!notificador.get(n).getSocket().isBound()) notificador.remove(n);
 
             notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
         }
+        System.out.println("n3");
         notificacoeslock.readUnlock();
         notificacoeslock.writeLock();
         serverdb.setNotificacoes(notificador);
         notificacoeslock.writeUnlock();
+        System.out.println("n4");
     }
 
     public int addNotificacao(Notificador n){
@@ -120,6 +122,7 @@ public class Model {
 
             valid = serverdb.checkValidNumber(port);
         }
+        serverdb.addNotificacao(port,n);
         return port;
     }
 
@@ -184,43 +187,41 @@ public class Model {
         Receber receber = new Receber(sock,inFile,nome_musica,"");
         Thread t1 = new Thread(receber);
         t1.start();
-        /*WaitingThread wt = new WaitingThread(t1,this,nomePL,id);
-        Thread t2 = new Thread(wt);
-        t2.start();*/
-        try {
+        WaitingThread wt = new WaitingThread(t1,this,nome_musica,id);
+        Thread wthread = new Thread(wt);
+        wthread.start();
 
-            t1.join();
-        }
-        catch (Exception e){System.out.println(e);}
-        addFile(nomePL,id);
     }
 
     public void download(String nomePL, int id ,Socket conn, DataOutputStream out){
-        try {lock.lock();
+
+        try {
+
             listaslock.readLock();System.out.println("inicio download");
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
-            listaslock.readUnlock();
-            //musica.lock();
+
+
             while (!musica.getdisponivel()) {
-                System.out.println("nao devias estar aqui");
+                listaslock.readUnlock();
+                System.out.println("w8ing....");
+                lock.lock();
                 musiccondition.await();
+                lock.unlock();
                 System.out.println("Tentando again");
                 musica = m.getMusica(id);
             }
-            lock.unlock();
-            //musica.unlock();
+
+
             System.out.println("sai...");
             String nome = musica.download();
 
             Enviar enviar = new Enviar(nome,conn,out,"");
             Thread t1 = new Thread(enviar);
             t1.start();
+
         }
-        catch (InterruptedException e){}
-        finally {
-            try{listaslock.readUnlock();}
-            catch (Exception e){}
-        }
+        catch (Exception e){}
+
     }
 }

@@ -10,11 +10,12 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
             ServerDB serverdb = new ServerDB();
+            Model model = new Model(serverdb);
             System.out.println("Spotify da Candonga");
             ServerSocket socket = new ServerSocket(5000);
             while (true){
                 Socket conn = socket.accept();
-                new Thread(new ControladorClientes(conn,serverdb)).start();
+                new Thread(new ControladorClientes(conn,serverdb,model)).start();
                 System.out.println("Client Connected");
             }
     }
@@ -24,9 +25,11 @@ public class Server {
         private Socket conn;
         private ServerDB serverdb;
         private int portaUD=0;
-        public ControladorClientes(Socket c, ServerDB s) {
+        private Model model;
+        public ControladorClientes(Socket c, ServerDB s,Model m) {
             conn = c;
             serverdb = s;
+            model=m;
         }
 
         public void run() {
@@ -36,7 +39,7 @@ public class Server {
                 BufferedReader in =new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                 /////////////////////////////////////////////// Login/registar
-                Model model = new Model(serverdb);
+
 
 
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb,conn);
@@ -85,11 +88,12 @@ public class Server {
                         out.println(nome_musica);
                         //////
                         Socket sock = null;
-                        sock = socket.accept();System.out.println("Conectado com algum sucesso.");
+                        sock = socket.accept();System.out.println("Conectado sucesso.");
 
                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
 
                         model.upload(nome_PL,mId,sock,inFile,nome_musica);
+
                         ///////
                         break;
                     case 3:
@@ -114,6 +118,7 @@ public class Server {
                         break;
                     case 5:
                         System.out.println("Ver PlayLists");
+
                         out.println(model.listasInfo());
                         break;
                     case 6:
