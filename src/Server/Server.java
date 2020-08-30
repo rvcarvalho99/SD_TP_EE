@@ -46,16 +46,16 @@ public class Server {
                 switch (read){
                     case 1:
                         System.out.println("Download");
+                        ServerSocket socket = new ServerSocket(6000);
                         String plName = in.readLine();
                         int musicId = Integer.parseInt(in.readLine());
+                        Socket connDownload = socket.accept();
                         String nomemusica = model.getMusicName(plName,musicId);
-                        File f = model.download(plName,musicId);
+
+                        DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
+                        model.download(plName,musicId,connDownload,outFile);
                         ///////////
-                        byte [] array = Files.readAllBytes(f.toPath());
-                        out.println(array.length);
-                        DataOutputStream outFile = new DataOutputStream(conn.getOutputStream());
-                        outFile.write(array);
-                        outFile.close();
+                        //outFile.close();
                         out.println(nomemusica);
                         ///////
                         break;
@@ -80,23 +80,18 @@ public class Server {
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
-                        String nomePL = in.readLine();System.out.println("b");
+                        String nomePL = in.readLine();
                         int numeromusicas = Integer.parseInt(in.readLine());
-                        System.out.println("a");
-                        ArrayList<Musica> musicas = new ArrayList<Musica>();System.out.println("c");
-                        for(int i= 1;i<=numeromusicas;i++){
-                            System.out.println("d");
-                            String titulo = in.readLine();System.out.println("e");
-                            String autor = in.readLine();System.out.println("f");
-                            int ano = Integer.parseInt(in.readLine());System.out.println("g");
-                            Musica m = new Musica(titulo,autor,ano,i);System.out.println("h");
-                            musicas.add(m);System.out.println("i");
-                            System.out.println("11111111");
+                        ArrayList<Musica> musicas = new ArrayList<Musica>();
+                        for(int i= 0;i<numeromusicas;i++){
+                            String titulo = in.readLine();
+                            String autor = in.readLine();
+                            int ano = Integer.parseInt(in.readLine());
+                            Musica m = new Musica(titulo,autor,ano,i);
+                            musicas.add(m);
                         }
-                        System.out.println("2222222");
                         ListadeMusicas l = new ListadeMusicas(musicas, user);
                         serverdb.addLista(nomePL,l);
-                        System.out.println("33333");
                         out.println(1);
 
                         break;

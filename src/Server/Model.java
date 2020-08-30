@@ -2,8 +2,11 @@ package Server;
 
 import com.sun.org.apache.bcel.internal.generic.RET;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -143,18 +146,32 @@ public class Model {
         }
     }
 
-    public File download(String nomePL,int id){
+    public String download(String nomePL, int id ,Socket conn, DataOutputStream out){
         try {
             listaslock.readLock();
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             musica.lock();
-            if(musica.getdisponivel())
-            return musica.download();
-            return null;
+            String nome = musica.download();
+            FileInputStream fil = new FileInputStream(nome+".mp3");
+            byte[] bytearray = new byte[100000];
+            int lido;
+            int count = 0;
+            while ((lido = fil.read(bytearray, 0, 100000)) > 0) {
+                count = count + lido;
+                out.write(bytearray, 0, lido);
+            }
+            fil.close();
+            conn.shutdownOutput();
+            conn.shutdownInput();
+            conn.close();
         }
+        catch (Exception e){}
         finally {
+
             listaslock.readUnlock();
+
+            return "done";
         }
     }
 }

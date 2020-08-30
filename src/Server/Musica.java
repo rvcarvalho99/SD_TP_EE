@@ -44,12 +44,12 @@ public class Musica {
         disponivel=disp;
     }
 
-    public File download(){
+    public String download(){
         lock.lock();
         descargas++;
         lock.unlock();
         //////////////////////// apenas carregar parte do file x bytes em x bytes (bonus)
-        return new File(titulo+".mp3");
+        return titulo;
     }
 
     public void lock(){
