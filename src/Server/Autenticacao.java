@@ -36,7 +36,7 @@ public class Autenticacao {
                         pass = in.readLine();
 
                         c = model.checkuser(nome, pass);
-                        if (!c.equals("")){login=1; out.println(1);}
+                        if (!c.equals("")){login=1; out.println(1);System.out.println("yooooo");}
                         else {
                             out.println(0);
                         }
@@ -46,7 +46,7 @@ public class Autenticacao {
                         nome = in.readLine();
                         pass = in.readLine();
                         System.out.println(1);
-                        out.println(model.novaConta(nome, pass));
+                        out.println(model.novaConta(nome, pass));System.out.println(model.novaConta(nome, pass));
                         System.out.println(2);
                         break;
 

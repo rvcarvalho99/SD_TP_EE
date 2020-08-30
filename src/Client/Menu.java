@@ -1,15 +1,17 @@
 package Client;
 
+import Transferencias.Enviar;
+import Transferencias.Receber;
+
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class Menu {
     private BufferedReader input;
     private BufferedReader in;
     private PrintWriter out;
     private Socket socket;
+    private int port;
 
     public Menu(BufferedReader b, BufferedReader i, PrintWriter o, Socket s){
         in=i;
@@ -19,10 +21,12 @@ public class Menu {
     }
 
     public void show() throws IOException {
+        port = Integer.parseInt(in.readLine());
+        Listener lis = new Listener(in,socket);
+        Thread t1 = new Thread(lis);
+        t1.start();
         while(true) {
-            Listener lis = new Listener(in,socket);
-            Thread t1 = new Thread(lis);
-            t1.start();
+
             System.out.println("1-Download 2-Upload 3-Criar PlayList 4-Adicionar PlayLists 5-Ver PlayLists 6-Ver PlayList 7-Mudar Password 8-Sair");
             String read = input.readLine();
             ///////////////////////////////////////////////
@@ -43,26 +47,11 @@ public class Menu {
                     String nomemusica = input.readLine();
                     System.out.println("Path para onde quer guardar o ficheiro");
                     String caminho = input.readLine();
-                    File n = new File(caminho + "//" + nomemusica + ".mp3");
-                    FileOutputStream fos = new FileOutputStream(n);
-                    Socket connDownload = new Socket("127.0.0.1", 6000);
+                    Socket connDownload = new Socket("127.0.0.1", port);System.out.println("conectado");
                     DataInputStream infile = new DataInputStream(connDownload.getInputStream());
-                    System.out.println("Conexao Download feita");
-                    int size = 100000;
-
-                    byte bytearray[] = new byte[size];
-                    int lido;
-                    int count = 0;
-                    Boolean alldone = true;
-                    while ((lido = infile.read(bytearray, 0, 100000)) > 0) {
-                        count = count + lido;
-                        fos.write(bytearray, 0, lido);
-                    }
-                    System.out.println("Fim de escrita no ficheiro");
-                    fos.close();
-                    connDownload.shutdownInput();
-                    connDownload.shutdownOutput();
-                    connDownload.close();
+                    Receber receber = new Receber(connDownload,infile,nomemusica,caminho);
+                    Thread t2 = new Thread(receber);
+                    t2.start();
 
                     break;
                 case "2": //tá
@@ -82,16 +71,11 @@ public class Menu {
                         String titulo = input.readLine();
                         System.out.println("Path:");
                         String path = input.readLine();
-                        bytearray = new byte[100000];
-                        Socket connUpload = new Socket("127.0.0.1", 7000);
+                        Socket connUpload = new Socket("127.0.0.1", port);System.out.println("conectado");
                         DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
-                        FileInputStream fil = new FileInputStream(path + "\\" + titulo+".mp3");
-                        count =0;
-                        while ((lido = fil.read(bytearray, 0, 100000)) > 0) {
-                            count = count + lido;
-                            outfile.write(bytearray, 0, lido);
-                        }
-                        fil.close();
+                        Enviar enviar = new Enviar(titulo,connUpload,outfile,path);
+                        Thread t3 = new Thread(enviar);
+                        t3.start();
 
 
                     break;

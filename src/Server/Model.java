@@ -1,14 +1,12 @@
 package Server;
 
-import com.sun.org.apache.bcel.internal.generic.RET;
+import Transferencias.Enviar;
+import Transferencias.Receber;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,6 +15,8 @@ public class Model {
     ServerDB serverdb;
     RWLock listaslock;
     RWLock contaslock;
+    RWLock musiclock;
+    RWLock notificacoeslock;
     ReentrantLock lock;
     Condition musiccondition;
     //condition para musica
@@ -25,8 +25,9 @@ public class Model {
         musiccondition = lock.newCondition();
         contaslock = new RWLock();
         listaslock = new RWLock();
+        notificacoeslock = new RWLock();
         serverdb=s;
-
+        musiclock = new RWLock();
     }
 
     /////////////////////////////////////////// Contas
@@ -76,30 +77,56 @@ public class Model {
     }
 
 
-    public int addFile(String nomePL, int id, byte[] bytearray){
+    public int addFile(String nomePL, int id ){
         try{
-            listaslock.writeLock();
+            lock.lock();
+            listaslock.writeLock();System.out.println("1ad");
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             musica.lock();
-            String nome =  musica.getTitulo();
-            File n = new File(nome+".mp3");
-            FileOutputStream fos = new FileOutputStream(n);
-            fos.write(bytearray);
-            fos.close();
             musica.setDisponivel(true);
-            musica.unlock();
-            listaslock.writeUnlock();
+            musica.unlock();System.out.println("2ad");
+
+            listaslock.writeUnlock();System.out.println("2.5ad");
+            musiccondition.signalAll();System.out.println("3ad");
+            //musiccondition.notifyAll();
+            lock.unlock();System.out.println("4ad");
             return 1;
         }
-        catch (Exception e){}
+        catch (Exception ie){System.out.println(ie);}
         return 0;
+    }
+
+    public void notificador(String message){
+        notificacoeslock.readLock();
+        HashMap<Integer,Notificador> notificador = serverdb.getNotificacoes();
+
+        for(Integer n : notificador.keySet()){
+            if(!notificador.get(n).getSocket().isBound()) notificador.remove(n);
+
+            notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
+        }
+        notificacoeslock.readUnlock();
+        notificacoeslock.writeLock();
+        serverdb.setNotificacoes(notificador);
+        notificacoeslock.writeUnlock();
+    }
+
+    public int addNotificacao(Notificador n){
+        int port=0;
+        boolean valid=false;
+        while (!valid) {
+            port = 1000 + (new Random()).nextInt(3999); // de forma a nao calhar na porta 5000 ( porta do server)
+
+            valid = serverdb.checkValidNumber(port);
+        }
+        return port;
     }
 
     public String getMusicName(String nomePL, int id){
         listaslock.readLock();
         ListadeMusicas m = serverdb.getLista(nomePL);
-        listaslock.writeUnlock();
+
         try {
             Musica musica = m.getMusica(id);
 
@@ -133,7 +160,7 @@ public class Model {
     }
 
     public String listasInfo(){
-        listaslock.readUnlock();
+        listaslock.readLock();
         try {
             return serverdb.listastoString();
         }
@@ -153,42 +180,47 @@ public class Model {
         }
     }
 
-    public void upload(){
-        listaslock.readLock();
+    public void upload(String nomePL, int id ,Socket sock, DataInputStream inFile, String nome_musica){
+        Receber receber = new Receber(sock,inFile,nome_musica,"");
+        Thread t1 = new Thread(receber);
+        t1.start();
+        /*WaitingThread wt = new WaitingThread(t1,this,nomePL,id);
+        Thread t2 = new Thread(wt);
+        t2.start();*/
+        try {
+
+            t1.join();
+        }
+        catch (Exception e){System.out.println(e);}
+        addFile(nomePL,id);
     }
 
-    public String download(String nomePL, int id ,Socket conn, DataOutputStream out){
-        try {
-            listaslock.readLock();
+    public void download(String nomePL, int id ,Socket conn, DataOutputStream out){
+        try {lock.lock();
+            listaslock.readLock();System.out.println("inicio download");
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
-            musica.lock();
-            while(!musica.getdisponivel()){
+            listaslock.readUnlock();
+            //musica.lock();
+            while (!musica.getdisponivel()) {
+                System.out.println("nao devias estar aqui");
                 musiccondition.await();
+                System.out.println("Tentando again");
+                musica = m.getMusica(id);
             }
-
+            lock.unlock();
+            //musica.unlock();
+            System.out.println("sai...");
             String nome = musica.download();
-            FileInputStream fil = new FileInputStream(nome+".mp3");
-            byte[] bytearray = new byte[100000];
-            int lido;
-            int count = 0;
-            listaslock.readUnlock();
 
-            while ((lido = fil.read(bytearray, 0, 100000)) > 0) {
-                count = count + lido;
-                out.write(bytearray, 0, lido);
-            }
-            fil.close();
-            conn.shutdownOutput();
-            conn.shutdownInput();
-            conn.close();
+            Enviar enviar = new Enviar(nome,conn,out,"");
+            Thread t1 = new Thread(enviar);
+            t1.start();
         }
-        catch (Exception e){}
+        catch (InterruptedException e){}
         finally {
-
-            listaslock.readUnlock();
-
-            return "done";
+            try{listaslock.readUnlock();}
+            catch (Exception e){}
         }
     }
 }

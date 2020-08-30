@@ -12,10 +12,11 @@ public class ServerDB {
     RWLock lock;
     private HashMap<String,String> contas;
     private HashMap<String, ListadeMusicas> listas;
-
+    private HashMap<Integer,Notificador> notificacoes;
 
 
     public ServerDB(){
+        notificacoes = new HashMap<Integer, Notificador>();
         lock = new RWLock();
         contas = new HashMap<>();
         listas = new HashMap<>();
@@ -37,6 +38,22 @@ public class ServerDB {
 
     public int listaSize(){
         return listas.size();
+    }
+
+    public void addNotificacao(Integer port, Notificador n){
+        notificacoes.put(port,n);
+    }
+
+    public HashMap<Integer,Notificador> getNotificacoes(){
+        return notificacoes;
+    }
+
+    public void setNotificacoes(HashMap<Integer,Notificador> n){
+        notificacoes = n;
+    }
+
+    public boolean checkValidNumber(int port){
+        return !notificacoes.containsKey(port);
     }
 
     public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);}

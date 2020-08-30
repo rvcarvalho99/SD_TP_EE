@@ -23,7 +23,7 @@ public class Server {
 
         private Socket conn;
         private ServerDB serverdb;
-
+        private int portaUD=0;
         public ControladorClientes(Socket c, ServerDB s) {
             conn = c;
             serverdb = s;
@@ -37,8 +37,18 @@ public class Server {
 
                 /////////////////////////////////////////////// Login/registar
                 Model model = new Model(serverdb);
+
+
                 Autenticacao autenticacao = new Autenticacao(out,in,serverdb,conn);
                 String user = autenticacao.conexao(model);
+                System.out.println(1);
+                Notificador not = new Notificador(conn, out);
+                System.out.println(2);
+                portaUD= model.addNotificacao(not);
+                System.out.println(3);
+                out.println(portaUD);
+                ServerSocket socket = null;
+                socket = new ServerSocket(portaUD);
                 if(user==null) return;
                 while (true){
                 int read = Integer.parseInt(in.readLine());
@@ -46,22 +56,23 @@ public class Server {
                 switch (read){
                     case 1:
                         System.out.println("Download");
-                        ServerSocket socket = new ServerSocket(6000);
+
                         String plName = in.readLine();
                         int musicId = Integer.parseInt(in.readLine());
-                        Socket connDownload = socket.accept();
-                        String nomemusica = model.getMusicName(plName,musicId);
+                        Socket connDownload = null;
+                        connDownload = socket.accept(); System.out.println("Conectado com algum sucesso.");
+
 
                         DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
                         model.download(plName,musicId,connDownload,outFile);
                         ///////////
                         //outFile.close();
-                        out.println(nomemusica);
                         ///////
                         break;
                     case 2:
                         System.out.println("Upload");
-                        ServerSocket connUpload = new ServerSocket(7000);
+
+
                         String nome_PL = in.readLine();
 
                         int mId = Integer.parseInt(in.readLine());
@@ -73,25 +84,12 @@ public class Server {
                         String nome_musica = model.getMusicName(nome_PL,mId);
                         out.println(nome_musica);
                         //////
-                        File n = new File( nome_musica + ".mp3");
-                        FileOutputStream fos = new FileOutputStream(n);
-                        Socket sock = connUpload.accept();
+                        Socket sock = null;
+                        sock = socket.accept();System.out.println("Conectado com algum sucesso.");
+
                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
-                        byte bytearray[] = new byte[100000];
-                        int lido;
-                        int count = 0;
-                        Boolean alldone = true;
-                        while ((lido = inFile.read(bytearray, 0, 100000)) > 0) {
-                            count = count + lido;
-                            fos.write(bytearray, 0, lido);
-                        }
-                        System.out.println("Fim de escrita no ficheiro");
-                        fos.close();
-                        sock.shutdownInput();
-                        sock.shutdownOutput();
-                        sock.close();
-                        model.addFile(nome_PL,mId,bytearray);
-                        model.upload();
+
+                        model.upload(nome_PL,mId,sock,inFile,nome_musica);
                         ///////
                         break;
                     case 3:
