@@ -61,6 +61,7 @@ public class Server {
                         break;
                     case 2:
                         System.out.println("Upload");
+                        ServerSocket connUpload = new ServerSocket(7000);
                         String nome_PL = in.readLine();
 
                         int mId = Integer.parseInt(in.readLine());
@@ -72,10 +73,25 @@ public class Server {
                         String nome_musica = model.getMusicName(nome_PL,mId);
                         out.println(nome_musica);
                         //////
-                        byte bytearray[] = new byte[Integer.parseInt(in.readLine())];
-                        DataInputStream inFile = new DataInputStream(conn.getInputStream());
-                        inFile.readFully(bytearray);
+                        File n = new File( nome_musica + ".mp3");
+                        FileOutputStream fos = new FileOutputStream(n);
+                        Socket sock = connUpload.accept();
+                        DataInputStream inFile = new DataInputStream(sock.getInputStream());
+                        byte bytearray[] = new byte[100000];
+                        int lido;
+                        int count = 0;
+                        Boolean alldone = true;
+                        while ((lido = inFile.read(bytearray, 0, 100000)) > 0) {
+                            count = count + lido;
+                            fos.write(bytearray, 0, lido);
+                        }
+                        System.out.println("Fim de escrita no ficheiro");
+                        fos.close();
+                        sock.shutdownInput();
+                        sock.shutdownOutput();
+                        sock.close();
                         model.addFile(nome_PL,mId,bytearray);
+                        model.upload();
                         ///////
                         break;
                     case 3:

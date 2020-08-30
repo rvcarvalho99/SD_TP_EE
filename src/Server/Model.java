@@ -9,13 +9,20 @@ import java.io.FileOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Model {
 
     ServerDB serverdb;
     RWLock listaslock;
     RWLock contaslock;
+    ReentrantLock lock;
+    Condition musiccondition;
+    //condition para musica
     public Model(ServerDB s){
+        lock = new ReentrantLock();
+        musiccondition = lock.newCondition();
         contaslock = new RWLock();
         listaslock = new RWLock();
         serverdb=s;
@@ -146,17 +153,27 @@ public class Model {
         }
     }
 
+    public void upload(){
+        listaslock.readLock();
+    }
+
     public String download(String nomePL, int id ,Socket conn, DataOutputStream out){
         try {
             listaslock.readLock();
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             musica.lock();
+            while(!musica.getdisponivel()){
+                musiccondition.await();
+            }
+
             String nome = musica.download();
             FileInputStream fil = new FileInputStream(nome+".mp3");
             byte[] bytearray = new byte[100000];
             int lido;
             int count = 0;
+            listaslock.readUnlock();
+
             while ((lido = fil.read(bytearray, 0, 100000)) > 0) {
                 count = count + lido;
                 out.write(bytearray, 0, lido);

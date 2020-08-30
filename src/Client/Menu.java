@@ -82,11 +82,16 @@ public class Menu {
                         String titulo = input.readLine();
                         System.out.println("Path:");
                         String path = input.readLine();
-
-                        byte[] array = Files.readAllBytes(Paths.get(path + "\\" + titulo + ".mp3"));
-                        out.println(array.length);
-                        DataOutputStream outfile = new DataOutputStream(socket.getOutputStream());
-                        outfile.write(array);
+                        bytearray = new byte[100000];
+                        Socket connUpload = new Socket("127.0.0.1", 7000);
+                        DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
+                        FileInputStream fil = new FileInputStream(path + "\\" + titulo+".mp3");
+                        count =0;
+                        while ((lido = fil.read(bytearray, 0, 100000)) > 0) {
+                            count = count + lido;
+                            outfile.write(bytearray, 0, lido);
+                        }
+                        fil.close();
 
 
                     break;
