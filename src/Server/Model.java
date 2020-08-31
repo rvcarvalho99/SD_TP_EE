@@ -78,6 +78,27 @@ public class Model {
 
     public boolean nomeExistLista(String nome){
         return  serverdb.checkExistName(nome);
+<<<<<<< Updated upstream
+=======
+    }
+
+    public int addFile(String nomePL, Musica musica ){
+        try{
+            listaslock.writeLock();
+            musica.lock();
+            int id = musica.getId();
+            musica.setDisponivel(true);
+            lock.lock();
+            musiccondition.signalAll();
+            lock.unlock();
+            musica.unlock();
+            listaslock.writeUnlock();
+            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
+            return 1;
+        }
+        catch (Exception ie){System.out.println(ie);}
+        return 0;
+>>>>>>> Stashed changes
     }
 
 
@@ -188,7 +209,11 @@ public class Model {
     }
 
     public void upload(String nomePL, Musica id ,Socket sock, DataInputStream inFile, String nome_musica){
+<<<<<<< Updated upstream
 
+=======
+        System.out.println("entrei no model");
+>>>>>>> Stashed changes
         int i = id.getId();
         Receber receber = new Receber(sock,inFile,Integer.toString(i),"Musica\\" + nomePL);
         Thread t1 = new Thread(receber);
