@@ -2,10 +2,7 @@ package Server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Server {
 
@@ -43,7 +40,7 @@ public class Server {
 
 
 
-                Autenticacao autenticacao = new Autenticacao(out,in,serverdb,conn);
+                Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
                 String user = autenticacao.conexao(model);
                 System.out.println(1);
                 Notificador not = new Notificador(conn, out);
@@ -51,11 +48,11 @@ public class Server {
                 portaUD= model.addNotificacao(not);
                 System.out.println(3);
                 out.println(portaUD);
-                ServerSocket socket = null;
-                socket = new ServerSocket(portaUD);
+                ServerSocket socket = new ServerSocket(portaUD);
                 if(user==null) return;
                 while (true){
                 int read = Integer.parseInt(in.readLine());
+
                 ///////////////////////////////////////////////
                 switch (read){
                     case 1:
@@ -65,8 +62,7 @@ public class Server {
                         int musicId = Integer.parseInt(in.readLine());
                         if(model.nomeExistLista(plName)) {
 
-                                Socket connDownload = null;
-                                connDownload = socket.accept();
+                                Socket connDownload = socket.accept();
                                 System.out.println("Conectado sucesso.");
                                 DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
 
@@ -87,8 +83,7 @@ public class Server {
                                 try {
                                     Musica musica = model.getMusicName(nome_PL, mId);
                                     out.println(musica.getTitulo());
-                                    Socket sock = null;
-                                    sock = socket.accept();
+                                    Socket sock = socket.accept();
                                     System.out.println("Conectado sucesso.");
                                     DataInputStream inFile = new DataInputStream(sock.getInputStream());
                                     model.upload(nome_PL, musica, sock, inFile, musica.getTitulo());
@@ -108,15 +103,15 @@ public class Server {
                         if(model.nomeExistLista(nomePL)){
                             int numeromusicas = Integer.parseInt(in.readLine());
                             for (int i = 0; i < numeromusicas; i++) {
-                                String titulo = in.readLine();
-                                String autor = in.readLine();
-                                int ano = Integer.parseInt(in.readLine());
+                                in.readLine();
+                                in.readLine();
+                                in.readLine();
                             }
                             out.println("Nome já usado. Escolha outro nome.");
                         }
                         else {
                             int numeromusicas = Integer.parseInt(in.readLine());
-                            ArrayList<Musica> musicas = new ArrayList<Musica>();
+                            ArrayList<Musica> musicas = new ArrayList<>();
                             Musica m;
                             for (int i = 0; i < numeromusicas; i++) {
                                 String titulo = in.readLine();
@@ -179,7 +174,7 @@ public class Server {
 
                 }
             }
-            catch (Exception e){}
+            catch (Exception e){System.out.println("500 - Internal Server Error");}
         }
 
     }

@@ -1,21 +1,15 @@
 package Server;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 public class Autenticacao {
     private ServerDB serverdb;
     private PrintWriter out;
     private BufferedReader in;
-    private Socket socket;
-
-    public Autenticacao(PrintWriter o, BufferedReader i , ServerDB server, Socket s){
+    public Autenticacao(PrintWriter o, BufferedReader i , ServerDB server){
         out=o;
         in=i;
         serverdb = server;
-        socket = s;
     }
 
     public String conexao(Model model){

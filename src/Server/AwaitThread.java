@@ -1,7 +1,6 @@
 package Server;
 
 import Transferencias.Enviar;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.DataOutputStream;
 import java.io.PrintWriter;
@@ -13,7 +12,6 @@ public class AwaitThread implements Runnable{
     ReentrantLock lock;
     Condition musiccondition;
     Musica musica;
-    String nome;
     String path;
     Socket conn;
     DataOutputStream out;
@@ -61,7 +59,7 @@ public class AwaitThread implements Runnable{
             t1.join();
             model.downloaddone(npl,musica.getId());
         }
-        catch (InterruptedException ie){}
+        catch (InterruptedException ie){System.out.println("500 - Internal Server Error - AwaitThread.java");}
 
     }
 }

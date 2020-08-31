@@ -1,11 +1,8 @@
 package Server;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerDB {
 
@@ -16,7 +13,7 @@ public class ServerDB {
 
 
     public ServerDB(){
-        notificacoes = new HashMap<Integer, Notificador>();
+        notificacoes = new HashMap<>();
         contas = new HashMap<>();
         listas = new HashMap<>();
     }
@@ -37,9 +34,6 @@ public class ServerDB {
 
     public ListadeMusicas getLista(String nome){return listas.get(nome);}
 
-    public int listaSize(){
-        return listas.size();
-    }
 
     public void addNotificacao(Integer port, Notificador n){
         notificacoes.put(port,n);
@@ -63,11 +57,12 @@ public class ServerDB {
     }
 
     public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);
-        new File("Musica" + File.separator + nome).mkdirs();}
+        new File("Musica" + File.separator + nome).mkdirs();
+    }
 
     public ArrayList<String> listastoString(){
         ArrayList<String> lst= new ArrayList<>();
-        String l2string="";
+        String l2string;
         int i=0;
         for (Map.Entry l : listas.entrySet()) {
             l2string=("Lista " + i + ": "+l.getKey());

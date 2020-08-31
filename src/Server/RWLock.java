@@ -34,7 +34,7 @@ public class RWLock {
                 this.waitReaders.await();
             }
             this.readRequests--;
-        } catch (InterruptedException ie) {}
+        } catch (InterruptedException ie) {System.out.println("500 - Internal Server Error - RWREADLOCK");}
         this.writersConsecutive = 0;
         this.readersConsecutive++;
         this.readers++;
@@ -49,7 +49,7 @@ public class RWLock {
                 this.waitWriters.await();
             }
             this.writeRequests--;
-        } catch (InterruptedException ie) {}
+        } catch (InterruptedException ie) {System.out.println("500 - Internal Server Error - RWWRITELOCK");}
         this.readersConsecutive = 0; // COMBO BREAK
         this.writersConsecutive++;
         this.writers++;

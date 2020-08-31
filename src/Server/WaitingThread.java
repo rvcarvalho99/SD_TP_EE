@@ -18,7 +18,7 @@ public class WaitingThread implements Runnable{
         try{
             t1.join();
 }
-        catch (Exception e){}
+        catch (Exception e){System.out.println("500 - Internal Server Error - WaitingThread");}
         model.addFile(nome,musica);
     }
 }
