@@ -4,12 +4,12 @@ public class WaitingThread implements Runnable{
     Thread t1;
     Model model;
     String nome;
-    int id;
-    public WaitingThread(Thread t,Model m,String nome_PL,int mId){
+    Musica musica;
+    public WaitingThread(Thread t,Model m,String nome_PL,Musica mId){
         t1=t;
         model=m;
         nome=nome_PL;
-        id=mId;
+        musica=mId;
     }
 
     @Override
@@ -17,10 +17,8 @@ public class WaitingThread implements Runnable{
 
         try{
             t1.join();
-
-        System.out.println("acabou");
 }
         catch (Exception e){}
-        model.addFile(nome,id);
+        model.addFile(nome,musica);
     }
 }

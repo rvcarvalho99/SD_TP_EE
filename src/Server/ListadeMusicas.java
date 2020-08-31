@@ -7,8 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ListadeMusicas {
     private ArrayList<Musica> musicas;
     private String criador;
-    private ReentrantLock lock;
-    public ListadeMusicas(ArrayList<Musica> m,String nome){
+    private ReentrantLock lock;    public ListadeMusicas(ArrayList<Musica> m,String nome){
         criador=nome;
         musicas=m;
         lock = new ReentrantLock();

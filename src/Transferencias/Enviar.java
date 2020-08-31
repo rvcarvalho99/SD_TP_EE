@@ -47,10 +47,10 @@ public class Enviar implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(11);
+
         try{
         enviar();}
         catch (Exception e) {System.out.println("Erro enviar");}
-        System.out.println(22);
+
     }
 }

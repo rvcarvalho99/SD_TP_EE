@@ -77,19 +77,18 @@ public class Model {
     }
 
 
-    public int addFile(String nomePL, int id ){
+    public int addFile(String nomePL, Musica musica ){
         try{
             listaslock.writeLock();
-            ListadeMusicas m = serverdb.getLista(nomePL);
-            Musica musica = m.getMusica(id);
             musica.lock();
+            int id = musica.getId();
             musica.setDisponivel(true);
             lock.lock();
             musiccondition.signalAll();
             lock.unlock();
-            listaslock.writeUnlock();
             musica.unlock();
-            notificador("PlayList: " + nomePL + " Music id: " + id);
+            listaslock.writeUnlock();
+            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
             return 1;
         }
         catch (Exception ie){System.out.println(ie);}
@@ -97,21 +96,21 @@ public class Model {
     }
 
     public void notificador(String message){
-        System.out.println("n1");
+
         notificacoeslock.readLock();
         HashMap<Integer,Notificador> notificador = serverdb.getNotificacoes();
-        System.out.println("n2");
+
         for(Integer n : notificador.keySet()){
             if(!notificador.get(n).getSocket().isBound()) notificador.remove(n);
 
             notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
         }
-        System.out.println("n3");
+
         notificacoeslock.readUnlock();
         notificacoeslock.writeLock();
         serverdb.setNotificacoes(notificador);
         notificacoeslock.writeUnlock();
-        System.out.println("n4");
+
     }
 
     public int addNotificacao(Notificador n){
@@ -126,14 +125,14 @@ public class Model {
         return port;
     }
 
-    public String getMusicName(String nomePL, int id){
+    public Musica getMusicName(String nomePL, int id){
         listaslock.readLock();
         ListadeMusicas m = serverdb.getLista(nomePL);
 
         try {
             Musica musica = m.getMusica(id);
 
-            return musica.getTitulo();
+            return musica;
         }
         finally {
             listaslock.readUnlock();
@@ -183,45 +182,27 @@ public class Model {
         }
     }
 
-    public void upload(String nomePL, int id ,Socket sock, DataInputStream inFile, String nome_musica){
+    public void upload(String nomePL, Musica id ,Socket sock, DataInputStream inFile, String nome_musica){
+        System.out.println("entrei no model");
         Receber receber = new Receber(sock,inFile,nome_musica,"");
         Thread t1 = new Thread(receber);
         t1.start();
-        WaitingThread wt = new WaitingThread(t1,this,nome_musica,id);
+        WaitingThread wt = new WaitingThread(t1,this,nomePL,id);
         Thread wthread = new Thread(wt);
         wthread.start();
 
     }
 
-    public void download(String nomePL, int id ,Socket conn, DataOutputStream out){
+    public void download(String nomePL, int id ,Socket conn, DataOutputStream out,PrintWriter outprint){
 
-        try {
-
-            listaslock.readLock();System.out.println("inicio download");
+            listaslock.readLock();
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
+            listaslock.readUnlock();
+            AwaitThread aw = new AwaitThread(lock,musiccondition,musica,"",conn,out,outprint,nomePL);
+            Thread t2= new Thread(aw);
+            t2.start();
 
-
-            while (!musica.getdisponivel()) {
-                listaslock.readUnlock();
-                System.out.println("w8ing....");
-                lock.lock();
-                musiccondition.await();
-                lock.unlock();
-                System.out.println("Tentando again");
-                musica = m.getMusica(id);
-            }
-
-
-            System.out.println("sai...");
-            String nome = musica.download();
-
-            Enviar enviar = new Enviar(nome,conn,out,"");
-            Thread t1 = new Thread(enviar);
-            t1.start();
-
-        }
-        catch (Exception e){}
 
     }
 }

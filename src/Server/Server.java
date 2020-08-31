@@ -63,14 +63,13 @@ public class Server {
                         String plName = in.readLine();
                         int musicId = Integer.parseInt(in.readLine());
                         Socket connDownload = null;
-                        connDownload = socket.accept(); System.out.println("Conectado com algum sucesso.");
+                        connDownload = socket.accept(); System.out.println("Conectado sucesso.");
 
 
                         DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
-                        model.download(plName,musicId,connDownload,outFile);
-                        ///////////
-                        //outFile.close();
-                        ///////
+
+                        model.download(plName,musicId,connDownload,outFile,out);
+
                         break;
                     case 2:
                         System.out.println("Upload");
@@ -84,15 +83,16 @@ public class Server {
                             break;
                         }
                         out.println(1);
-                        String nome_musica = model.getMusicName(nome_PL,mId);
-                        out.println(nome_musica);
+                        Musica musica = model.getMusicName(nome_PL,mId);
+
+                        out.println(musica.getTitulo());
                         //////
                         Socket sock = null;
                         sock = socket.accept();System.out.println("Conectado sucesso.");
 
                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
 
-                        model.upload(nome_PL,mId,sock,inFile,nome_musica);
+                        model.upload(nome_PL,musica,sock,inFile,musica.getTitulo());
 
                         ///////
                         break;
@@ -101,16 +101,19 @@ public class Server {
                         String nomePL = in.readLine();
                         int numeromusicas = Integer.parseInt(in.readLine());
                         ArrayList<Musica> musicas = new ArrayList<Musica>();
+                        Musica m;
                         for(int i= 0;i<numeromusicas;i++){
                             String titulo = in.readLine();
                             String autor = in.readLine();
                             int ano = Integer.parseInt(in.readLine());
-                            Musica m = new Musica(titulo,autor,ano,i);
-                            musicas.add(m);
+                            m = new Musica(titulo,autor,ano,i);
+                            musicas.add(i,m);
                         }
+
                         ListadeMusicas l = new ListadeMusicas(musicas, user);
+
                         serverdb.addLista(nomePL,l);
-                        out.println(1);
+                        out.println(musicas.size() + " <-tamanho");
 
                         break;
                     case 4:

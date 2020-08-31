@@ -31,7 +31,7 @@ public class Receber implements Runnable {
                 count = count + lido;
                 fos.write(bytearray, 0, lido);
             }
-            System.out.println("Fim de escrita no ficheiro");
+
 
 
 
@@ -42,12 +42,12 @@ public class Receber implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("receber inicio");
+
 
         try{
             receber();}
         catch (Exception e) {System.out.println("Erro receber");}
-        System.out.println("receber fim");
+        System.out.println("Fim Download");
 
     }
 }

@@ -125,7 +125,6 @@ public class Menu {
                     System.out.println("Ver PlayLists");
                     out.println(5);
 
-                    System.out.println(in.readLine());
                     break;
                 case "6":
                     System.out.println("Ver Playlist");
