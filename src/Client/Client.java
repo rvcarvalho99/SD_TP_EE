@@ -13,7 +13,7 @@ public class Client {
 
         boolean aux = true;
         while (aux) {
-            System.out.println("Hello there");
+            System.out.println("Bem Vindo");
             System.out.println("1-login 2-registar 3-quit");
             String  option = input.readLine();
             String username;

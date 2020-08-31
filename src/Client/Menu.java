@@ -5,6 +5,8 @@ import Transferencias.Receber;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 
 public class Menu {
     private BufferedReader input;
@@ -19,6 +21,7 @@ public class Menu {
         input=b;
         socket=s;
     }
+
 
     public void show() throws IOException {
         port = Integer.parseInt(in.readLine());
@@ -45,7 +48,18 @@ public class Menu {
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
                     System.out.println("Path para onde quer guardar o ficheiro");
-                    String caminho = input.readLine();
+                    boolean pathvalid=false;
+                    boolean nfst=false;
+                    String caminho ="";
+                    while(!pathvalid){
+                        System.out.println("Path:");
+                        caminho = input.readLine();
+                        File f = new File(caminho + "\\" + nomemusica+".mp3");
+                        if(f.exists() && !f.isDirectory()) {
+                            pathvalid=true;
+                        }
+                        nfst=true;
+                    }
                     out.println(idMusica);
                     Socket connDownload = new Socket("127.0.0.1", port);
                     DataInputStream infile = new DataInputStream(connDownload.getInputStream());
@@ -67,8 +81,23 @@ public class Menu {
                     int idM = Integer.parseInt(input.readLine());
                         System.out.println("Nome ad música");
                         String titulo = input.readLine();
+                        boolean pathval=false;
+                        boolean notfst = false;
+                        String path ="";
+                        while(!pathval){
+                            if(notfst){
+                                System.out.println("Path Inválido, tente de novo.");
+                                System.out.println("Nome ad música");
+                                titulo = input.readLine();
+                            }
                         System.out.println("Path:");
-                        String path = input.readLine();
+                        path = input.readLine();
+                            File f = new File(path + "\\" + titulo+".mp3");
+                            if(f.exists() && !f.isDirectory()) {
+                                pathval=true;
+                            }
+                            notfst=true;
+                        }
                         out.println(idM);
 
                         Socket connUpload = new Socket("127.0.0.1", port);
@@ -130,9 +159,25 @@ public class Menu {
                     String nomeAP = input.readLine();
                     out.println(nomeAP);
 
-               /* if (in.readInt()==1)
-                    System.out.println();*/
+                    System.out.println("Titulo:");
+                    String tituloP = input.readLine();
+                    out.println(tituloP);
 
+                    System.out.println("Artista:");
+                    String artistaP = input.readLine();
+                    out.println(artistaP);
+
+                    System.out.println("Ano:");
+                    boolean invalidYear = true;
+                    while (invalidYear){
+                        try {
+                            int anoP = Integer.parseInt(input.readLine());
+                            out.println(anoP);
+                            invalidYear = false;
+                        }catch (Exception fakeYear){
+                            System.out.println("O ano intoduzido é inválido");
+                        }
+                    }
                     break;
                 case "5": //tá
                     System.out.println("Ver PlayLists");
@@ -161,9 +206,6 @@ public class Menu {
                         newPasswordConf = input.readLine();
                     }
                     out.println(newPassword);
-                    if (Integer.parseInt(in.readLine()) == 1)
-                        System.out.println("Sucesso");
-                    else System.out.println("Insucesso");
                     break;
                 case "8":
                     return;

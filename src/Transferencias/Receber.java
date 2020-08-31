@@ -23,11 +23,11 @@ public class Receber implements Runnable {
         try {
 
 
-            byte bytearray[] = new byte[100000];
+            byte bytearray[] = new byte[1000];
             int lido;
             int count = 0;
             Boolean alldone = true;
-            while ((lido = inFile.read(bytearray, 0, 100000)) > 0) {
+            while ((lido = inFile.read(bytearray, 0, 1000)) > 0) {
                 count = count + lido;
                 fos.write(bytearray, 0, lido);
             }

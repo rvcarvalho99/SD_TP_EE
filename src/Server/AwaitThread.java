@@ -19,7 +19,9 @@ public class AwaitThread implements Runnable{
     DataOutputStream out;
     PrintWriter outprint;
     String npl;
-    public AwaitThread(ReentrantLock l, Condition c, Musica m, String p, Socket s, DataOutputStream o, PrintWriter ou, String np){
+    Model model;
+    RWLock listas;
+    public AwaitThread(ReentrantLock l, Condition c, Musica m, String p, Socket s, DataOutputStream o, PrintWriter ou, String np, Model mo,RWLock ll){
         lock=l;
         musiccondition=c;
         musica=m;
@@ -28,10 +30,13 @@ public class AwaitThread implements Runnable{
         out=o;
         outprint=ou;
         npl=np;
+        model=mo;
+        listas=ll;
     }
     @Override
     public void run() {
         lock.lock();
+        listas.readLock();
         try {
             Boolean firsttime = true;
             while (!musica.getdisponivel()) {
@@ -39,15 +44,22 @@ public class AwaitThread implements Runnable{
                     firsttime=false;
                     outprint.println("O seu Download está em lista de espera (Conteúdo não disponivel).");
                 }
+                listas.readUnlock();
                 musiccondition.await();
+                listas.readLock();
             }
 
             lock.unlock();
-            outprint.println("O seu Download vai continuar");
             String nome = Integer.toString(musica.getId());
+            if(!firsttime)
+            outprint.println("O seu Download da musica de id " + nome + " vai continuar");
+
+            listas.readUnlock();
             Enviar enviar = new Enviar(nome, conn, out, path);
             Thread t1 = new Thread(enviar);
             t1.start();
+            t1.join();
+            model.downloaddone(npl,musica.getId());
         }
         catch (InterruptedException ie){}
 

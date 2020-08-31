@@ -23,6 +23,8 @@ public class ServerDB {
 
     ////////////////////// CONTA
 
+
+
     public HashMap<String,String> getContas(){
         return contas;
     }
@@ -63,14 +65,16 @@ public class ServerDB {
     public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);
         new File("Musica" + File.separator + nome).mkdirs();}
 
-    public String listastoString(){
+    public ArrayList<String> listastoString(){
+        ArrayList<String> lst= new ArrayList<>();
         String l2string="";
         int i=0;
         for (Map.Entry l : listas.entrySet()) {
-            l2string+=("Lista " + i + ": "+l.getKey()) + "«»";
+            l2string=("Lista " + i + ": "+l.getKey());
+            lst.add(l2string);
             i++;
         }
-        return l2string;
+        return lst;
     }
 
 

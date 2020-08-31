@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -63,17 +64,14 @@ public class Server {
                         String plName = in.readLine();
                         int musicId = Integer.parseInt(in.readLine());
                         if(model.nomeExistLista(plName)) {
-                            if (!user.equals(model.getOwnerName(plName))) {
-                                out.println("Esta PlayList não lhe pertence, logo não pode fazer upload do seu conteúdo");
 
-                            } else {
                                 Socket connDownload = null;
                                 connDownload = socket.accept();
                                 System.out.println("Conectado sucesso.");
                                 DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
 
                                 model.download(plName,musicId,connDownload,outFile,out);
-                            }
+
                         }
                         else out.println("Esta PlayList não existe");
                         break;
@@ -136,19 +134,45 @@ public class Server {
                         break;
                     case 4:
                         System.out.println("Adicionar a PlayList");
+                        String nomepl = in.readLine();
+                        if(model.nomeExistLista(nomepl)) {
+                            if (!user.equals(model.getOwnerName(nomepl))) {
+                                in.readLine();
+                                in.readLine();
+                                in.readLine();
+                                out.println("Esta PlayList não lhe pertence, logo não pode fazer upload do seu conteúdo");
+
+                            } else {
+                                String titulo = in.readLine();
+                                String autor = in.readLine();
+                                int ano = Integer.parseInt(in.readLine());
+                                model.addMusictoList(nomepl,titulo,autor,ano);
+                                out.println("Musica adicionada com Sucesso");
+                            }
+                            }
+                        else {
+                            out.println("Esta PlayList não existe");
+                        }
                         break;
                     case 5:
                         System.out.println("Ver PlayLists");
 
-                        out.println(model.listasInfo());
+                        ArrayList<String> lst = model.listasInfo();
+                        for (String l : lst) {
+                            out.println(l);
+                        }
                         break;
                     case 6:
                         System.out.println("Ver PlayList");
                         nomePL = in.readLine();
-                        out.println(model.music2String(nomePL));
+                        ArrayList<String> mc = model.music2String(nomePL);
+                        for (String l : mc) {
+                            out.println(l);
+                        }
                         break;
                     case 7:
                         System.out.println("Alterar Password");
+                        model.mudarPass(user,in.readLine());
                         break;
 
                 }

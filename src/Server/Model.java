@@ -5,6 +5,7 @@ import Transferencias.Receber;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.locks.Condition;
@@ -28,7 +29,7 @@ public class Model {
         serverdb=s;
     }
 
-    /////////////////////////////////////////// Contas
+    /////////////////////////////////////////// contas
 
     public int novaConta(String nome,String pass){
 
@@ -60,12 +61,23 @@ public class Model {
         return "";
     }
 
+    public void mudarPass(String nome, String pass){
+        contaslock.writeLock();
+        serverdb.addConta(nome,pass);
+        contaslock.writeUnlock();
+    }
 
 
 
 
-    ////////////////////////////////////////// Musicas
+    ////////////////////////////////////////// listas
 
+    public void addMusictoList(String nomepl, String titulo, String autor, int ano){
+        listaslock.writeLock();
+        ListadeMusicas m = serverdb.getLista(nomepl);
+        m.addMusic(titulo,autor,ano);
+        listaslock.writeUnlock();
+    }
 
     public int novaLista(String nome, ListadeMusicas musicas){
         listaslock.writeLock();
@@ -77,31 +89,21 @@ public class Model {
 
 
     public boolean nomeExistLista(String nome){
-        return  serverdb.checkExistName(nome);
-    }
-
-    public int addFile(String nomePL, Musica musica ){
         try{
-            listaslock.writeLock();
-            musica.lock();
-            int id = musica.getId();
-            musica.setDisponivel(true);
-            lock.lock();
-            musiccondition.signalAll();
-            lock.unlock();
-            musica.unlock();
-            listaslock.writeUnlock();
-            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
-            return 1;
+            listaslock.readLock();
+        return  serverdb.checkExistName(nome);
         }
-        catch (Exception ie){System.out.println(ie);}
-        return 0;
+        finally {
+            listaslock.readUnlock();
+        }
     }
 
 
+
+    ////////////////////////////////////////// notificacoes
     public void notificador(String message){
 
-        notificacoeslock.readLock();
+        notificacoeslock.writeLock();
         HashMap<Integer,Notificador> notificador = serverdb.getNotificacoes();
 
         for(Integer n : notificador.keySet()){
@@ -110,24 +112,25 @@ public class Model {
             notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
         }
 
-        notificacoeslock.readUnlock();
-        notificacoeslock.writeLock();
         serverdb.setNotificacoes(notificador);
         notificacoeslock.writeUnlock();
 
     }
 
     public int addNotificacao(Notificador n){
+        notificacoeslock.writeLock();
         int port=0;
         boolean valid=false;
         while (!valid) {
             port = 1000 + (new Random()).nextInt(3999); // de forma a nao calhar na porta 5000 ( porta do server)
-
             valid = serverdb.checkValidNumber(port);
         }
         serverdb.addNotificacao(port,n);
+        notificacoeslock.writeUnlock();
         return port;
     }
+
+    ////////////////////////////////////////// gets
 
     public Musica getMusicName(String nomePL, int id){
         listaslock.readLock();
@@ -155,17 +158,9 @@ public class Model {
         }
     }
 
-    public int getListaSize(){
-        try{
-            listaslock.readLock();
-            return serverdb.listaSize();
-        }
-        finally {
-            listaslock.readUnlock();
-        }
-    }
+    ////////////////////////////////////////// info
 
-    public String listasInfo(){
+    public ArrayList<String> listasInfo(){//////////////////alterar
         listaslock.readLock();
         try {
             return serverdb.listastoString();
@@ -175,25 +170,56 @@ public class Model {
         }
     }
 
-    public String music2String(String nome){
+    public ArrayList<String> music2String(String nome){//////////////////alterar
         try {
             listaslock.readLock();
             ListadeMusicas m = serverdb.getLista(nome);
             return m.lista2String();
         }
-        catch (Exception e){return "PlayList invalida";}
+        catch (Exception e){
+            ArrayList<String> s = new ArrayList<>();
+            s.add("PlayList invalida");
+            return s;}
         finally {
             listaslock.readUnlock();
         }
     }
 
+    ////////////////////////////////////////// transferencias
+
+    public void downloaddone(String nmp, int id){
+        listaslock.writeLock();
+        ListadeMusicas m = serverdb.getLista(nmp);
+        Musica musica = m.getMusica(id);
+        musica.download();
+        listaslock.writeUnlock();
+    }
+
+    public int addFile(String nomePL, Musica musica ){
+        try{
+            listaslock.writeLock();
+            musica.lock();
+            int id = musica.getId();
+            musica.setDisponivel(true);
+            lock.lock();
+            musiccondition.signalAll();
+            lock.unlock();
+            musica.unlock();
+            listaslock.writeUnlock();
+            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
+            return 1;
+        }
+        catch (Exception ie){System.out.println(ie);}
+        return 0;
+    }
+
     public void upload(String nomePL, Musica id ,Socket sock, DataInputStream inFile, String nome_musica){
-
-        System.out.println("entrei no model");
-
+        listaslock.readLock();
         int i = id.getId();
+        listaslock.readUnlock();
         Receber receber = new Receber(sock,inFile,Integer.toString(i),"Musica\\" + nomePL);
         Thread t1 = new Thread(receber);
+
         t1.start();
         WaitingThread wt = new WaitingThread(t1,this,nomePL,id);
         Thread wthread = new Thread(wt);
@@ -206,7 +232,7 @@ public class Model {
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             listaslock.readUnlock();
-            AwaitThread aw = new AwaitThread(lock,musiccondition,musica,"Musica\\" + nomePL,conn,out,outprint,nomePL);
+            AwaitThread aw = new AwaitThread(lock,musiccondition,musica,"Musica\\" + nomePL,conn,out,outprint,nomePL,this,listaslock);
             Thread t2= new Thread(aw);
             t2.start();
 

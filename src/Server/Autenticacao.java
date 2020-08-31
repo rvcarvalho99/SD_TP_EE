@@ -28,7 +28,6 @@ public class Autenticacao {
                 String pass;
                 switch (received) {
                     case -1:
-                        System.out.println("sair");
                         return "";
                     case 1:
                         System.out.println("login");
@@ -36,7 +35,7 @@ public class Autenticacao {
                         pass = in.readLine();
 
                         c = model.checkuser(nome, pass);
-                        if (!c.equals("")){login=1; out.println(1);System.out.println("yooooo");}
+                        if (!c.equals("")){login=1;}
                         else {
                             out.println(0);
                         }
@@ -45,9 +44,7 @@ public class Autenticacao {
                         System.out.println("registar");
                         nome = in.readLine();
                         pass = in.readLine();
-                        System.out.println(1);
                         out.println(model.novaConta(nome, pass));System.out.println(model.novaConta(nome, pass));
-                        System.out.println(2);
                         break;
 
                 }
