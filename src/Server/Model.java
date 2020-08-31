@@ -19,6 +19,8 @@ public class Model {
     ReentrantLock lock;
     Condition musiccondition;
     //condition para musica
+
+
     public Model(ServerDB s){
         lock = new ReentrantLock();
         musiccondition = lock.newCondition();
@@ -62,9 +64,7 @@ public class Model {
 
 
 
-
-
-    ////////////////////////////////////////// Musicas
+    ////////////////////////////////////////// Listas
 
 
     public int novaLista(String nome, ListadeMusicas musicas){
@@ -80,23 +80,9 @@ public class Model {
         return  serverdb.checkExistName(nome);
     }
 
-    public int addFile(String nomePL, Musica musica ){
-        try{
-            listaslock.writeLock();
-            musica.lock();
-            int id = musica.getId();
-            musica.setDisponivel(true);
-            lock.lock();
-            musiccondition.signalAll();
-            lock.unlock();
-            musica.unlock();
-            listaslock.writeUnlock();
-            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
-            return 1;
-        }
-        catch (Exception ie){System.out.println(ie);}
-        return 0;
-    }
+
+
+    /////////////////////////////////////////////////////////// Notificacoes
 
     public void notificador(String message){
 
@@ -128,6 +114,8 @@ public class Model {
         return port;
     }
 
+    ////////////////////////////////////////////////////////////// Gets
+
     public Musica getMusicName(String nomePL, int id){
         listaslock.readLock();
         ListadeMusicas m = serverdb.getLista(nomePL);
@@ -154,15 +142,8 @@ public class Model {
         }
     }
 
-    public int getListaSize(){
-        try{
-            listaslock.readLock();
-            return serverdb.listaSize();
-        }
-        finally {
-            listaslock.readUnlock();
-        }
-    }
+
+    ///////////////////////////////////////////////////// Strings
 
     public String listasInfo(){
         listaslock.readLock();
@@ -180,9 +161,30 @@ public class Model {
             ListadeMusicas m = serverdb.getLista(nome);
             return m.lista2String();
         }
+        catch (Exception e){return "Lista inválida.";}
         finally {
             listaslock.readUnlock();
         }
+    }
+
+    /////////////////////////////////////////////////////// Transferencias
+
+    public int addFile(String nomePL, Musica musica ){
+        try{
+            listaslock.writeLock();
+            musica.lock();
+            int id = musica.getId();
+            musica.setDisponivel(true);
+            lock.lock();
+            musiccondition.signalAll();
+            lock.unlock();
+            musica.unlock();
+            listaslock.writeUnlock();
+            notificador("PlayList: " + nomePL + ". Id da Musica: " + id);
+            return 1;
+        }
+        catch (Exception ie){System.out.println(ie);}
+        return 0;
     }
 
     public void upload(String nomePL, Musica id ,Socket sock, DataInputStream inFile, String nome_musica){
@@ -208,4 +210,7 @@ public class Model {
 
 
     }
+
+
+    /////////////////////////////////////////////////////////
 }
