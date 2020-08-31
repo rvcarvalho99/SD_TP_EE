@@ -44,8 +44,8 @@ public class AwaitThread implements Runnable{
 
             lock.unlock();
             outprint.println("O seu Download vai continuar");
-            String nome = musica.download();
-            Enviar enviar = new Enviar(nome, conn, out, "");
+            String nome = Integer.toString(musica.getId());
+            Enviar enviar = new Enviar(nome, conn, out, path);
             Thread t1 = new Thread(enviar);
             t1.start();
         }

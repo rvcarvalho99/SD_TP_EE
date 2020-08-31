@@ -62,59 +62,77 @@ public class Server {
 
                         String plName = in.readLine();
                         int musicId = Integer.parseInt(in.readLine());
-                        Socket connDownload = null;
-                        connDownload = socket.accept(); System.out.println("Conectado sucesso.");
+                        if(model.nomeExistLista(plName)) {
+                            if (!user.equals(model.getOwnerName(plName))) {
+                                out.println("Esta PlayList não lhe pertence, logo não pode fazer upload do seu conteúdo");
 
+                            } else {
+                                Socket connDownload = null;
+                                connDownload = socket.accept();
+                                System.out.println("Conectado sucesso.");
+                                DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
 
-                        DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
-
-                        model.download(plName,musicId,connDownload,outFile,out);
-
+                                model.download(plName,musicId,connDownload,outFile,out);
+                            }
+                        }
+                        else out.println("Esta PlayList não existe");
                         break;
                     case 2:
                         System.out.println("Upload");
-
-
                         String nome_PL = in.readLine();
-
                         int mId = Integer.parseInt(in.readLine());
-                        if(!user.equals(model.getOwnerName(nome_PL))) {
-                            out.println(0);
-                            break;
+                        if(model.nomeExistLista(nome_PL)) {
+                            if (!user.equals(model.getOwnerName(nome_PL))) {
+                                out.println("Esta PlayList não lhe pertence, logo não pode fazer upload do seu conteúdo");
+
+                            } else {
+                                try {
+                                    Musica musica = model.getMusicName(nome_PL, mId);
+                                    out.println(musica.getTitulo());
+                                    Socket sock = null;
+                                    sock = socket.accept();
+                                    System.out.println("Conectado sucesso.");
+                                    DataInputStream inFile = new DataInputStream(sock.getInputStream());
+                                    model.upload(nome_PL, musica, sock, inFile, musica.getTitulo());
+                                }
+                                catch (Exception e){
+                                    out.println("Forneceu um id de musica inválido");
+                                }
+                            }
                         }
-                        out.println(1);
-                        Musica musica = model.getMusicName(nome_PL,mId);
-
-                        out.println(musica.getTitulo());
-                        //////
-                        Socket sock = null;
-                        sock = socket.accept();System.out.println("Conectado sucesso.");
-
-                        DataInputStream inFile = new DataInputStream(sock.getInputStream());
-
-                        model.upload(nome_PL,musica,sock,inFile,musica.getTitulo());
-
-                        ///////
+                        else{
+                            out.println("Esta PlayList não existe");
+                        }
                         break;
                     case 3:
                         System.out.println("Criar PlayList");
                         String nomePL = in.readLine();
-                        int numeromusicas = Integer.parseInt(in.readLine());
-                        ArrayList<Musica> musicas = new ArrayList<Musica>();
-                        Musica m;
-                        for(int i= 0;i<numeromusicas;i++){
-                            String titulo = in.readLine();
-                            String autor = in.readLine();
-                            int ano = Integer.parseInt(in.readLine());
-                            m = new Musica(titulo,autor,ano,i);
-                            musicas.add(i,m);
+                        if(model.nomeExistLista(nomePL)){
+                            int numeromusicas = Integer.parseInt(in.readLine());
+                            for (int i = 0; i < numeromusicas; i++) {
+                                String titulo = in.readLine();
+                                String autor = in.readLine();
+                                int ano = Integer.parseInt(in.readLine());
+                            }
+                            out.println("Nome já usado. Escolha outro nome.");
                         }
+                        else {
+                            int numeromusicas = Integer.parseInt(in.readLine());
+                            ArrayList<Musica> musicas = new ArrayList<Musica>();
+                            Musica m;
+                            for (int i = 0; i < numeromusicas; i++) {
+                                String titulo = in.readLine();
+                                String autor = in.readLine();
+                                int ano = Integer.parseInt(in.readLine());
+                                m = new Musica(titulo, autor, ano, i);
+                                musicas.add(i, m);
+                            }
 
-                        ListadeMusicas l = new ListadeMusicas(musicas, user);
+                            ListadeMusicas l = new ListadeMusicas(musicas, user);
 
-                        serverdb.addLista(nomePL,l);
-                        out.println(musicas.size() + " <-tamanho");
-
+                            serverdb.addLista(nomePL, l);
+                            out.println(musicas.size() + " <-tamanho");
+                        }
                         break;
                     case 4:
                         System.out.println("Adicionar a PlayList");

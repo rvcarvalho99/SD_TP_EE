@@ -45,9 +45,11 @@ public class Receber implements Runnable {
 
 
         try{
-            receber();}
+            receber();
+            System.out.println("Fim Download");
+        }
         catch (Exception e) {System.out.println("Erro receber");}
-        System.out.println("Fim Download");
+
 
     }
 }

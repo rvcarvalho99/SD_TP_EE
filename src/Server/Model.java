@@ -10,8 +10,6 @@ import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static java.lang.Thread.sleep;
-
 public class Model {
 
     ServerDB serverdb;
@@ -73,9 +71,14 @@ public class Model {
         listaslock.writeLock();
         serverdb.addLista(nome,musicas);
         listaslock.writeUnlock();
+
         return 1;
     }
 
+
+    public boolean nomeExistLista(String nome){
+        return  serverdb.checkExistName(nome);
+    }
 
     public int addFile(String nomePL, Musica musica ){
         try{
@@ -183,14 +186,14 @@ public class Model {
     }
 
     public void upload(String nomePL, Musica id ,Socket sock, DataInputStream inFile, String nome_musica){
-        System.out.println("entrei no model");
-        Receber receber = new Receber(sock,inFile,nome_musica,"");
+
+        int i = id.getId();
+        Receber receber = new Receber(sock,inFile,Integer.toString(i),"Musica\\" + nomePL);
         Thread t1 = new Thread(receber);
         t1.start();
         WaitingThread wt = new WaitingThread(t1,this,nomePL,id);
         Thread wthread = new Thread(wt);
         wthread.start();
-
     }
 
     public void download(String nomePL, int id ,Socket conn, DataOutputStream out,PrintWriter outprint){
@@ -199,7 +202,7 @@ public class Model {
             ListadeMusicas m = serverdb.getLista(nomePL);
             Musica musica = m.getMusica(id);
             listaslock.readUnlock();
-            AwaitThread aw = new AwaitThread(lock,musiccondition,musica,"",conn,out,outprint,nomePL);
+            AwaitThread aw = new AwaitThread(lock,musiccondition,musica,"Musica\\" + nomePL,conn,out,outprint,nomePL);
             Thread t2= new Thread(aw);
             t2.start();
 

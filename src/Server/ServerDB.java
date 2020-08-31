@@ -56,7 +56,12 @@ public class ServerDB {
         return !notificacoes.containsKey(port);
     }
 
-    public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);}
+    public boolean checkExistName(String name){
+        return listas.containsKey(name);
+    }
+
+    public void addLista(String nome,ListadeMusicas mus){listas.put(nome,mus);
+        new File("Musica" + File.separator + nome).mkdirs();}
 
     public String listastoString(){
         String l2string="";

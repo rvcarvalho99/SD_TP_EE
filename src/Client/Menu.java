@@ -42,12 +42,12 @@ public class Menu {
                     //try catch e exceptions como musicaInexistente
                     System.out.println("ID da música");
                     int idMusica = Integer.parseInt(input.readLine());
-                    out.println(idMusica);
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
                     System.out.println("Path para onde quer guardar o ficheiro");
                     String caminho = input.readLine();
-                    Socket connDownload = new Socket("127.0.0.1", port);System.out.println("conectado");
+                    out.println(idMusica);
+                    Socket connDownload = new Socket("127.0.0.1", port);
                     DataInputStream infile = new DataInputStream(connDownload.getInputStream());
                     Receber receber = new Receber(connDownload,infile,nomemusica,caminho);
                     Thread t2 = new Thread(receber);
@@ -65,13 +65,13 @@ public class Menu {
                     System.out.println("ID Musica:");
                     //try catch
                     int idM = Integer.parseInt(input.readLine());
-                    out.println(idM);
-
                         System.out.println("Nome ad música");
                         String titulo = input.readLine();
                         System.out.println("Path:");
                         String path = input.readLine();
-                        Socket connUpload = new Socket("127.0.0.1", port);System.out.println("conectado");
+                        out.println(idM);
+
+                        Socket connUpload = new Socket("127.0.0.1", port);
                         DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
                         Enviar enviar = new Enviar(titulo,connUpload,outfile,path);
                         Thread t3 = new Thread(enviar);
