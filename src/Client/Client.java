@@ -32,6 +32,7 @@ public class Client {
                         System.out.println("Login feito com sucesso");
                         Menu menu = new Menu(input,in,out,socket);
                         menu.show();
+                        aux = false;
                     }
                     else {
                         System.out.println("Não foi possível fazer login");

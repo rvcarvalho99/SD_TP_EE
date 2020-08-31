@@ -86,9 +86,17 @@ public class Menu {
                     String nomePlay = input.readLine();
                     out.println(nomePlay);
                     System.out.println("Número de músicas da PlayList");
-                    //try catch size incompatível
-                    int sizePlay = Integer.parseInt(input.readLine());
-                    out.println(sizePlay);
+                    int sizePlay = 0;
+                    boolean invalidSize = true;
+                    while (invalidSize){
+                        try {
+                            sizePlay = Integer.parseInt(input.readLine());
+                            out.println(sizePlay);
+                            invalidSize = false;
+                        }catch (Exception fakeSize){
+                            System.out.println("O tamanho intoduzido é inválido");
+                        }
+                    }
 
                     for (int i = 0; i < sizePlay; i++) {
                         System.out.println("Titulo:");
@@ -100,11 +108,16 @@ public class Menu {
                         out.println(artistaP);
 
                         System.out.println("Ano:");
-                        //try catch caso se faça merda no ano
-                        int anoP = Integer.parseInt(input.readLine());
-                        out.println(anoP);
-
-
+                        boolean invalidYear = true;
+                        while (invalidYear){
+                            try {
+                                int anoP = Integer.parseInt(input.readLine());
+                                out.println(anoP);
+                                invalidYear = false;
+                            }catch (Exception fakeYear){
+                                System.out.println("O ano intoduzido é inválido");
+                            }
+                        }
                         //perguntar se quer adicionar já o ficheiro
                         //se quiser temos de pedir o path e eviar
                     }
