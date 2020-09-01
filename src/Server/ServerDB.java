@@ -18,7 +18,7 @@ public class ServerDB {
         listas = new HashMap<>();
     }
 
-    ////////////////////// CONTA
+    ////////////////////// Contas
 
 
 
@@ -30,27 +30,9 @@ public class ServerDB {
         contas.put(nome,pass);
     }
 
-    /////////////////////// MUSICA
+    /////////////////////// Listas
 
     public ListadeMusicas getLista(String nome){return listas.get(nome);}
-
-
-    public void addNotificacao(Integer port, Notificador n){
-        notificacoes.put(port,n);
-    }
-
-    public HashMap<Integer,Notificador> getNotificacoes(){
-        return notificacoes;
-    }
-
-
-    public void setNotificacoes(HashMap<Integer,Notificador> n){
-        notificacoes = n;
-    }
-
-    public boolean checkValidNumber(int port){
-        return !notificacoes.containsKey(port);
-    }
 
     public boolean checkExistName(String name){
         return listas.containsKey(name);
@@ -71,6 +53,28 @@ public class ServerDB {
         }
         return lst;
     }
+
+
+    /////////////////////// Notificacoes
+
+    public void addNotificacao(Integer port, Notificador n){
+        notificacoes.put(port,n);
+    }
+
+    public HashMap<Integer,Notificador> getNotificacoes(){
+        return notificacoes;
+    }
+
+
+    public void setNotificacoes(HashMap<Integer,Notificador> n){
+        notificacoes = n;
+    }
+
+
+    public boolean checkValidNumber(int port){
+        return !notificacoes.containsKey(port);
+    }
+
 
 
 
