@@ -22,7 +22,9 @@ public class Menu {
 
 
     public void show() throws IOException {
+        System.out.println("Entrar show");
         port = Integer.parseInt(in.readLine());
+        System.out.println("Entrar show");
         Listener lis = new Listener(in,socket);
         Thread t1 = new Thread(lis);
         t1.start();
@@ -32,7 +34,7 @@ public class Menu {
             String read = input.readLine();
 
             switch (read) {
-                case "1": //tá
+                case "1":
                     System.out.println("Download");
                     out.println(1);
 
@@ -157,8 +159,38 @@ public class Menu {
                                 System.out.println("O ano introduzido é inválido");
                             }
                         }
-                        //perguntar se quer adicionar já o ficheiro
-                        //se quiser temos de pedir o path e eviar
+                        System.out.println("Quer adicionar já o ficheiro música?");
+                        System.out.println("1-Adicionar 0-Não adicionar");
+                        if (input.readLine().equals("1")){
+                            out.println(1);
+
+                            System.out.println("Nome da música na tua máquina");
+                            String tituloA = input.readLine();
+                            boolean pathvalA=false;
+                            boolean notfstA = false;
+                            String pathA ="";
+                            while(!pathvalA){
+                                if(notfstA){
+                                    System.out.println("Path Inválido, tente de novo.");
+                                    System.out.println("Nome da música");
+                                    tituloA = input.readLine();
+                                }
+                                System.out.println("Path:");
+                                pathA = input.readLine();
+                                File f = new File(pathA + "\\" + tituloA+".mp3");
+                                if(f.exists() && !f.isDirectory()) {
+                                    pathvalA=true;
+                                }
+                                notfstA=true;
+                            }
+
+                            Socket connUploadA = new Socket("127.0.0.1", port);
+                            DataOutputStream outfileA = new DataOutputStream(connUploadA.getOutputStream());
+                            Enviar enviarA = new Enviar(tituloA,connUploadA,outfileA,pathA);
+                            Thread t3A = new Thread(enviarA);
+                            t3A.start();
+                        }
+                        else out.println(0);
                     }
                     break;
                 case "4":

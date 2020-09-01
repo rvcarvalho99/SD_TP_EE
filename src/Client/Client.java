@@ -12,8 +12,8 @@ public class Client {
         PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
 
         boolean aux = true;
+        System.out.println("Bem Vindo");
         while (aux) {
-            System.out.println("Bem Vindo");
             System.out.println("1-login 2-registar 3-quit");
             String  option = input.readLine();
             String username;
