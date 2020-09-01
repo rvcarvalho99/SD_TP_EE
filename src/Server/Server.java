@@ -41,7 +41,7 @@ public class Server {
 
                 Autenticacao autenticacao = new Autenticacao(out, in, model);
                 String user = autenticacao.conexao();
-                if(user.equals("")) return;
+                if (user.equals("")) return;
                 out.println(1);
                 Notificador not = new Notificador(conn, out);
                 portaUD = model.addNotificacao(not);
@@ -66,8 +66,9 @@ public class Server {
                                     DataOutputStream outFile = new DataOutputStream(connDownload.getOutputStream());
 
                                     model.download(plName, musicId, connDownload, outFile, out);
+                                } catch (Exception e) {
+                                    out.println("Forneceu um id de musica inválido");
                                 }
-                                catch (Exception e){out.println("Forneceu um id de musica inválido");}
                             } else out.println("Esta PlayList não existe");
                             break;
                         case 2:
@@ -171,7 +172,15 @@ public class Server {
 
                 }
             } catch (Exception e) {
-                System.out.println("500 - Internal Server Error");
+                try {
+                    conn.shutdownOutput();
+                    conn.shutdownInput();
+                    conn.close();
+                    model.notificador("");
+                    System.out.println("Client out");
+                } catch (Exception es) {
+                    System.out.println(" 500 - Internal server error");
+                }
             }
         }
 

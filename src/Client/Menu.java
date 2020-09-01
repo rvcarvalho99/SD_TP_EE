@@ -52,8 +52,8 @@ public class Menu {
                     while(!pathvalid){
                         System.out.println("Path:");
                         caminho = input.readLine();
-                        File f = new File(caminho + "\\" + nomemusica+".mp3");
-                        if(f.exists() && !f.isDirectory()) {
+                        File f = new File(caminho);
+                        if(f.isDirectory()) {
                             pathvalid=true;
                         }
                     }
