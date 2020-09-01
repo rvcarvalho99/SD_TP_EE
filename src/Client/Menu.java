@@ -28,9 +28,9 @@ public class Menu {
         t1.start();
         while(true) {
 
-            System.out.println("1-Download 2-Upload 3-Criar PlayList 4-Adicionar PlayLists 5-Ver PlayLists 6-Ver PlayList 7-Mudar Password 8-Sair");
+            System.out.println("1-Download 2-Upload 3-Criar PlayList 4-Adicionar à PlayList 5-Ver PlayLists 6-Ver PlayList 7-Mudar Password 8-Sair");
             String read = input.readLine();
-            ///////////////////////////////////////////////
+
             switch (read) {
                 case "1": //tá
                     System.out.println("Download");
@@ -40,10 +40,17 @@ public class Menu {
                     String nomeP = input.readLine();
                     out.println(nomeP);
 
-                    //try catch e exceptions como musicaInexistente
-                    ////////////////////////////////////////////////////////////////////////////check if id
                     System.out.println("ID da música");
-                    int idMusica = Integer.parseInt(input.readLine());
+                    boolean ivalidId = true;
+                    while (ivalidId){
+                        try{
+                            int idMusica = Integer.parseInt(input.readLine());
+                            out.println(idMusica);
+                        }catch (Exception invalidID){
+                            System.out.println("O ID introduzido é inválido");
+                        }
+                    }
+
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
                     System.out.println("Path para onde quer guardar o ficheiro");
@@ -57,7 +64,6 @@ public class Menu {
                             pathvalid=true;
                         }
                     }
-                    out.println(idMusica);
                     Socket connDownload = new Socket("127.0.0.1", port);
                     DataInputStream infile = new DataInputStream(connDownload.getInputStream());
                     Receber receber = new Receber(connDownload,infile,nomemusica,caminho);
@@ -65,7 +71,7 @@ public class Menu {
                     t2.start();
 
                     break;
-                case "2": //tá
+                case "2":
                     System.out.println("Upload");
                     out.println(2);
 
@@ -74,19 +80,27 @@ public class Menu {
                     out.println(nomeUP);
 
                     System.out.println("ID Musica:");
-                    //try catch
-                    int idM = Integer.parseInt(input.readLine());///////////////////////////////////////////////////check if id
-                        System.out.println("Nome da música");
-                        String titulo = input.readLine();
-                        boolean pathval=false;
-                        boolean notfst = false;
-                        String path ="";
-                        while(!pathval){
-                            if(notfst){
-                                System.out.println("Path Inválido, tente de novo.");
-                                System.out.println("Nome da música");
-                                titulo = input.readLine();
-                            }
+                    boolean invalidId = true;
+                    while (invalidId){
+                        try {
+                            int idM = Integer.parseInt(input.readLine());
+                            out.println(idM);
+                            invalidId = false;
+                        }catch (Exception fakeSize){
+                            System.out.println("O id introduzido é inválido");
+                        }
+                    }
+                    System.out.println("Nome da música");
+                    String titulo = input.readLine();
+                    boolean pathval=false;
+                    boolean notfst = false;
+                    String path ="";
+                    while(!pathval){
+                        if(notfst){
+                            System.out.println("Path Inválido, tente de novo.");
+                            System.out.println("Nome da música");
+                            titulo = input.readLine();
+                        }
                         System.out.println("Path:");
                         path = input.readLine();
                             File f = new File(path + "\\" + titulo+".mp3");
@@ -94,18 +108,17 @@ public class Menu {
                                 pathval=true;
                             }
                             notfst=true;
-                        }
-                        out.println(idM);
+                    }
 
-                        Socket connUpload = new Socket("127.0.0.1", port);
-                        DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
-                        Enviar enviar = new Enviar(titulo,connUpload,outfile,path);
-                        Thread t3 = new Thread(enviar);
-                        t3.start();
 
+                    Socket connUpload = new Socket("127.0.0.1", port);
+                    DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
+                    Enviar enviar = new Enviar(titulo,connUpload,outfile,path);
+                    Thread t3 = new Thread(enviar);
+                    t3.start();
 
                     break;
-                case "3": //tá
+                case "3":
                     System.out.println("Criar PlayList");
                     out.println(3);
                     System.out.println("Nome da PlayList");
@@ -148,8 +161,8 @@ public class Menu {
                         //se quiser temos de pedir o path e eviar
                     }
                     break;
-                case "4": //tá
-                    System.out.println("Adicionar a PlayList");
+                case "4":
+                    System.out.println("Adicionar à PlayList");
                     out.println(4);
 
                     System.out.println("Nome da PlayList");
@@ -176,7 +189,7 @@ public class Menu {
                         }
                     }
                     break;
-                case "5": //tá
+                case "5":
                     System.out.println("Ver PlayLists");
                     out.println(5);
 
@@ -206,6 +219,8 @@ public class Menu {
                     break;
                 case "8":
                     return;
+                default:
+                    break;
             }
         }
     }
