@@ -26,6 +26,9 @@ public class ListadeMusicas {
         Musica musica = new Musica(titulo,autor,ano,m);
         musicas.add(m,musica);
     }
+    public void addM(Musica mu){
+        musicas.add(mu);
+    }
 
     public ArrayList<String> lista2String(){
         String l2string;

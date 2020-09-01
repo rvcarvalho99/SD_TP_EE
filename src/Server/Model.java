@@ -95,6 +95,13 @@ public class Model {
     }
 
 
+    public Musica addMusica(Musica m, String nomepl){
+        listaslock.writeLock();
+        ListadeMusicas l = serverdb.getLista(nomepl);
+        l.addM(m);
+        listaslock.writeUnlock();
+        return m;
+    }
     ////////////////////////////////////////// notificacoes
     public void notificador(String message) {
 
@@ -121,7 +128,8 @@ public class Model {
         int port = 0;
         boolean valid = false;
         while (!valid) {
-            port = 1000 + (new Random()).nextInt(3999); // de forma a nao calhar na porta 5000 ( porta do server)
+            port = 1000 + (new Random()).nextInt(63999);
+            if(port!=5000)
             valid = serverdb.checkValidNumber(port);
         }
         serverdb.addNotificacao(port, n);

@@ -12,7 +12,7 @@ public class Server {
 
         Model model = new Model();
         System.out.println("Spotify da Candonga");
-        ServerSocket socket = new ServerSocket(5000);
+        ServerSocket socket = new ServerSocket(65000);
         while (true) {
             Socket conn = socket.accept();
             new Thread(new ControladorClientes(conn, model)).start();
@@ -105,28 +105,28 @@ public class Server {
                                     in.readLine();
                                     in.readLine();
                                     in.readLine();
+                                    in.readLine();
                                 }
                                 out.println("Nome já usado. Escolha outro nome.");
                             } else {
                                 int numeromusicas = Integer.parseInt(in.readLine());
                                 ArrayList<Musica> musicas = new ArrayList<>();
                                 HashMap<Musica, Socket> toupload = new HashMap<>();
-                                Musica m;
+
                                 ListadeMusicas l = new ListadeMusicas(musicas, user);
                                 model.novaLista(nomePL, l);
                                 for (int i = 0; i < numeromusicas; i++) {
                                     String titulo = in.readLine();
                                     String autor = in.readLine();
                                     int ano = Integer.parseInt(in.readLine());
-                                    m = new Musica(titulo, autor, ano, i);
-                                    model.addMusictoList(nomePL, titulo, autor, ano);
-                                    String s = in.readLine();
+
+                                    Musica m = model.addMusica(new Musica(titulo, autor, ano, i),nomePL);
                                     int upload = Integer.parseInt(in.readLine());
                                     if (upload == 1) {
                                         Socket sock = socket.accept();
                                         System.out.println("Conectado sucesso.");
                                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
-                                        model.upload(nomePL, m, sock, inFile, titulo);
+                                        model.upload(nomePL, musicas.get(i), sock, inFile, titulo);
                                     }
                                 }
 
