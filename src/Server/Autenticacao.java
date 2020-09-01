@@ -3,16 +3,16 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 
 public class Autenticacao {
-    private ServerDB serverdb;
+    private Model model;
     private PrintWriter out;
     private BufferedReader in;
-    public Autenticacao(PrintWriter o, BufferedReader i , ServerDB server){
+    public Autenticacao(PrintWriter o, BufferedReader i , Model server){
         out=o;
         in=i;
-        serverdb = server;
+        model = server;
     }
 
-    public String conexao(Model model){
+    public String conexao(){
         int login=0;
         String c="";
         while(login==0) {

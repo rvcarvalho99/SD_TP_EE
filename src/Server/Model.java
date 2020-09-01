@@ -13,12 +13,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Model {
 
-    ServerDB serverdb;
-    RWLock listaslock;
-    RWLock contaslock;
-    RWLock notificacoeslock;
-    ReentrantLock lock;
-    Condition musiccondition;
+    private ServerDB serverdb;
+    private RWLock listaslock;
+    private RWLock contaslock;
+    private RWLock notificacoeslock;
+    private ReentrantLock lock;
+    private Condition musiccondition;
     //condition para musica
     public Model(ServerDB s){
         lock = new ReentrantLock();

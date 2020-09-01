@@ -13,7 +13,7 @@ public class Server {
             ServerSocket socket = new ServerSocket(5000);
             while (true){
                 Socket conn = socket.accept();
-                new Thread(new ControladorClientes(conn,serverdb,model)).start();
+                new Thread(new ControladorClientes(conn,model)).start();
                 System.out.println("Client Connected");
             }
     }
@@ -21,12 +21,10 @@ public class Server {
     public static class ControladorClientes implements Runnable {
 
         private Socket conn;
-        private ServerDB serverdb;
         private int portaUD=0;
         private Model model;
-        public ControladorClientes(Socket c, ServerDB s,Model m) {
+        public ControladorClientes(Socket c,Model m) {
             conn = c;
-            serverdb = s;
             model=m;
         }
 
@@ -40,8 +38,8 @@ public class Server {
 
 
 
-                Autenticacao autenticacao = new Autenticacao(out,in,serverdb);
-                String user = autenticacao.conexao(model);
+                Autenticacao autenticacao = new Autenticacao(out,in,model);
+                String user = autenticacao.conexao();
                 System.out.println(1);
                 Notificador not = new Notificador(conn, out);
                 System.out.println(2);
@@ -123,7 +121,7 @@ public class Server {
 
                             ListadeMusicas l = new ListadeMusicas(musicas, user);
 
-                            serverdb.addLista(nomePL, l);
+                            model.novaLista(nomePL, l);
                             out.println(musicas.size() + " <-tamanho");
                         }
                         break;
