@@ -22,9 +22,7 @@ public class Menu {
 
 
     public void show() throws IOException {
-        System.out.println("Entrar show");
         port = Integer.parseInt(in.readLine());
-        System.out.println("Entrar show");
         Listener lis = new Listener(in,socket);
         Thread t1 = new Thread(lis);
         t1.start();
@@ -41,13 +39,14 @@ public class Menu {
                     System.out.println("Nome playlist:");
                     String nomeP = input.readLine();
                     out.println(nomeP);
-
+                    int idMusica=500;
                     System.out.println("ID da música");
                     boolean ivalidId = true;
                     while (ivalidId){
                         try{
-                            int idMusica = Integer.parseInt(input.readLine());
-                            out.println(idMusica);
+                            idMusica = Integer.parseInt(input.readLine());
+
+                            ivalidId=false;
                         }catch (Exception invalidID){
                             System.out.println("O ID introduzido é inválido");
                         }
@@ -66,6 +65,7 @@ public class Menu {
                             pathvalid=true;
                         }
                     }
+                    out.println(idMusica);
                     Socket connDownload = new Socket("127.0.0.1", port);
                     DataInputStream infile = new DataInputStream(connDownload.getInputStream());
                     Receber receber = new Receber(connDownload,infile,nomemusica,caminho);

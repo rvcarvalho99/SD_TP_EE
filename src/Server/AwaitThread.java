@@ -33,7 +33,7 @@ public class AwaitThread implements Runnable{
     }
     @Override
     public void run() {
-        lock.lock();
+
         listas.readLock();
         try {
             Boolean firsttime = true;
@@ -43,11 +43,13 @@ public class AwaitThread implements Runnable{
                     outprint.println("O seu Download está em lista de espera (Conteúdo não disponivel).");
                 }
                 listas.readUnlock();
+                lock.lock();
                 musiccondition.await();
+                lock.unlock();
                 listas.readLock();
             }
 
-            lock.unlock();
+
             String nome = Integer.toString(musica.getId());
             if(!firsttime)
             outprint.println("O seu Download da musica de id " + nome + " vai continuar");

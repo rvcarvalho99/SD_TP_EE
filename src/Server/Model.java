@@ -1,6 +1,5 @@
 package Server;
 
-import Transferencias.Enviar;
 import Transferencias.Receber;
 
 import java.io.*;
