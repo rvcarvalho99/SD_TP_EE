@@ -110,9 +110,9 @@ public class Model {
         for (Integer n : i) {
             notificador.remove(n);
         }
-        serverdb.setNotificacoes(notificador);
         if (!message.equals(""))
-            notificacoeslock.writeUnlock();
+            serverdb.setNotificacoes(notificador);
+        notificacoeslock.writeUnlock();
 
     }
 
