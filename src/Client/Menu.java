@@ -5,8 +5,6 @@ import Transferencias.Receber;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 
 public class Menu {
     private BufferedReader input;
@@ -43,13 +41,13 @@ public class Menu {
                     out.println(nomeP);
 
                     //try catch e exceptions como musicaInexistente
+                    ////////////////////////////////////////////////////////////////////////////check if id
                     System.out.println("ID da música");
                     int idMusica = Integer.parseInt(input.readLine());
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
                     System.out.println("Path para onde quer guardar o ficheiro");
                     boolean pathvalid=false;
-                    boolean nfst=false;
                     String caminho ="";
                     while(!pathvalid){
                         System.out.println("Path:");
@@ -58,7 +56,6 @@ public class Menu {
                         if(f.exists() && !f.isDirectory()) {
                             pathvalid=true;
                         }
-                        nfst=true;
                     }
                     out.println(idMusica);
                     Socket connDownload = new Socket("127.0.0.1", port);
@@ -78,8 +75,8 @@ public class Menu {
 
                     System.out.println("ID Musica:");
                     //try catch
-                    int idM = Integer.parseInt(input.readLine());
-                        System.out.println("Nome ad música");
+                    int idM = Integer.parseInt(input.readLine());///////////////////////////////////////////////////check if id
+                        System.out.println("Nome da música");
                         String titulo = input.readLine();
                         boolean pathval=false;
                         boolean notfst = false;
@@ -87,7 +84,7 @@ public class Menu {
                         while(!pathval){
                             if(notfst){
                                 System.out.println("Path Inválido, tente de novo.");
-                                System.out.println("Nome ad música");
+                                System.out.println("Nome da música");
                                 titulo = input.readLine();
                             }
                         System.out.println("Path:");
@@ -123,7 +120,7 @@ public class Menu {
                             out.println(sizePlay);
                             invalidSize = false;
                         }catch (Exception fakeSize){
-                            System.out.println("O tamanho intoduzido é inválido");
+                            System.out.println("O tamanho introduzido é inválido");
                         }
                     }
 
@@ -144,14 +141,14 @@ public class Menu {
                                 out.println(anoP);
                                 invalidYear = false;
                             }catch (Exception fakeYear){
-                                System.out.println("O ano intoduzido é inválido");
+                                System.out.println("O ano introduzido é inválido");
                             }
                         }
                         //perguntar se quer adicionar já o ficheiro
                         //se quiser temos de pedir o path e eviar
                     }
                     break;
-                case "4": //ainda não está
+                case "4": //tá
                     System.out.println("Adicionar a PlayList");
                     out.println(4);
 
@@ -175,7 +172,7 @@ public class Menu {
                             out.println(anoP);
                             invalidYear = false;
                         }catch (Exception fakeYear){
-                            System.out.println("O ano intoduzido é inválido");
+                            System.out.println("O ano introduzido é inválido");
                         }
                     }
                     break;

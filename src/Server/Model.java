@@ -20,13 +20,13 @@ public class Model {
     private ReentrantLock lock;
     private Condition musiccondition;
     //condition para musica
-    public Model(ServerDB s){
+    public Model(){
         lock = new ReentrantLock();
         musiccondition = lock.newCondition();
         contaslock = new RWLock();
         listaslock = new RWLock();
         notificacoeslock = new RWLock();
-        serverdb=s;
+        serverdb = new ServerDB();
     }
 
     /////////////////////////////////////////// contas
@@ -108,7 +108,7 @@ public class Model {
 
         for(Integer n : notificador.keySet()){
             if(!notificador.get(n).getSocket().isBound()) notificador.remove(n);
-
+            else
             notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
         }
 

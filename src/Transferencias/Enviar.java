@@ -28,10 +28,8 @@ public class Enviar implements Runnable {
 
             byte[] bytearray = new byte[1000];
             int lido;
-            int count = 0;
             while ((lido = fil.read(bytearray, 0, 1000)) > 0) {
-                count = count + lido;
-                out.write(bytearray, 0, lido);
+                out.write(bytearray, 0,lido);
             }
 
         }

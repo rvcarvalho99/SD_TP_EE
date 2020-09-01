@@ -25,15 +25,9 @@ public class Receber implements Runnable {
 
             byte bytearray[] = new byte[1000];
             int lido;
-            int count = 0;
-            Boolean alldone = true;
             while ((lido = inFile.read(bytearray, 0, 1000)) > 0) {
-                count = count + lido;
                 fos.write(bytearray, 0, lido);
             }
-
-
-
 
         }
         catch (Exception e){System.out.println("Erro receber");}
