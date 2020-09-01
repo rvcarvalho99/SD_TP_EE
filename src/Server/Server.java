@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Server {
 
@@ -109,18 +110,26 @@ public class Server {
                             } else {
                                 int numeromusicas = Integer.parseInt(in.readLine());
                                 ArrayList<Musica> musicas = new ArrayList<>();
+                                HashMap<Musica, Socket> toupload = new HashMap<>();
                                 Musica m;
+                                ListadeMusicas l = new ListadeMusicas(musicas, user);
+                                model.novaLista(nomePL, l);
                                 for (int i = 0; i < numeromusicas; i++) {
                                     String titulo = in.readLine();
                                     String autor = in.readLine();
                                     int ano = Integer.parseInt(in.readLine());
                                     m = new Musica(titulo, autor, ano, i);
-                                    musicas.add(i, m);
+                                    model.addMusictoList(nomePL, titulo, autor, ano);
+                                    String s = in.readLine();
+                                    int upload = Integer.parseInt(in.readLine());
+                                    if (upload == 1) {
+                                        Socket sock = socket.accept();
+                                        System.out.println("Conectado sucesso.");
+                                        DataInputStream inFile = new DataInputStream(sock.getInputStream());
+                                        model.upload(nomePL, m, sock, inFile, titulo);
+                                    }
                                 }
 
-                                ListadeMusicas l = new ListadeMusicas(musicas, user);
-
-                                model.novaLista(nomePL, l);
                             }
                             break;
                         case 4:
