@@ -56,11 +56,15 @@ public class Server {
                     switch (read) {
                         case 1:
                             System.out.println("Download");
-
+                            boolean pass=true;
                             String plName = in.readLine();
+;                            if(plName.equals("quit")) break;
+
                             int musicId = Integer.parseInt(in.readLine());
+                            if(musicId==-1) pass=false;
                             if (model.nomeExistLista(plName)) {
                                 try {
+
                                     Musica musica = model.getMusicName(plName, musicId);
                                     Socket connDownload = socket.accept();
                                     System.out.println("Conectado sucesso.");
@@ -71,13 +75,15 @@ public class Server {
                                     if(musicId>=0)
                                     out.println("Forneceu um id de musica inválido");
                                 }
-                            } else out.println("Esta PlayList não existe");
+                            } else if(pass) out.println("Esta PlayList não existe");
                             break;
                         case 2:
                             System.out.println("Upload");
                             String nome_PL = in.readLine();
-                            nome_PL.equals("quit");
+                            if(nome_PL.equals("quit")) break;
+                            boolean pas=true;
                             int mId = Integer.parseInt(in.readLine());
+                            if(mId==-1) pas=false;
                             if (model.nomeExistLista(nome_PL)) {
                                 if (!user.equals(model.getOwnerName(nome_PL))) {
                                     out.println("Esta PlayList não lhe pertence, logo não pode fazer upload do seu conteúdo");
@@ -85,7 +91,6 @@ public class Server {
                                 } else {
                                     try {
                                         Musica musica = model.getMusicName(nome_PL, mId);
-                                        out.println(musica.getTitulo());
                                         Socket sock = socket.accept();
                                         System.out.println("Conectado sucesso.");
                                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
@@ -96,13 +101,13 @@ public class Server {
                                     }
                                 }
                             } else {
-                                out.println("Esta PlayList não existe");
+                                if(pas)out.println("Esta PlayList não existe");
                             }
                             break;
                         case 3:
                             System.out.println("Criar PlayList");
                             String nomePL = in.readLine();
-                            nomePL.equals("quit");
+                            if(nomePL.equals("quit")) break;
                             if (model.nomeExistLista(nomePL)) {
                                 int numeromusicas = Integer.parseInt(in.readLine());
                                 for (int i = 0; i < numeromusicas; i++) {
@@ -139,7 +144,7 @@ public class Server {
                         case 4:
                             System.out.println("Adicionar a PlayList");
                             String nomepl = in.readLine();
-                            nomepl.equals("quit");
+                            if(nomepl.equals("quit")) break;
                             if (model.nomeExistLista(nomepl)) {
                                 if (!user.equals(model.getOwnerName(nomepl))) {
                                     in.readLine();
