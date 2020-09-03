@@ -107,17 +107,20 @@ public class Model {
         notificacoeslock.writeLock();
         HashMap<Integer, Notificador> notificador = serverdb.getNotificacoes();
         ArrayList<Integer> i = new ArrayList<>();
-        for (Integer n : notificador.keySet()) {
-            if (!notificador.get(n).getSocket().isConnected() || notificador.get(n).getSocket().isClosed()) {
-                i.add(n);
-            } else
-                notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
-        }
-        for (Integer n : i) {
-            notificador.remove(n);
-        }
-        if (!message.equals(""))
+        if (!message.equals("")) {
+            for (Integer n : notificador.keySet()) {
+                if (!notificador.get(n).getSocket().isConnected() || notificador.get(n).getSocket().isClosed()) {
+                    i.add(n);
+                } else
+                    notificador.get(n).getPrintwriter().println("!! NOTIFICACAO: " + message + "!!");
+            }
+            for (Integer n : i) {
+                notificador.remove(n);
+            }
+
             serverdb.setNotificacoes(notificador);
+
+        }
         notificacoeslock.writeUnlock();
 
     }
