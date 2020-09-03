@@ -56,7 +56,6 @@ public class Menu {
 
                             if (idMusica >= 0) {
                                 ivalidId = false;
-                                out.println(idMusica);
                             } else System.out.println("O ID introduzido é inválido");
                         } catch (Exception invalidID) {
                             if (idMusicaS.equals("quit")) {
