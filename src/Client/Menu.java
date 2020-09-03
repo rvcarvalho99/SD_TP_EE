@@ -28,7 +28,7 @@ public class Menu {
         t1.start();
         while(true) {
 
-            System.out.println("1-Download 2-Upload 3-Criar PlayList 4-Adicionar à PlayList 5-Ver PlayLists 6-Ver PlayList 7-Mudar Password 8-Sair");
+            System.out.println("1-Download 2-Upload 3-Criar PlayList 4-Adicionar à PlayList 5-Ver todas as PlayLists 6-Ver PlayList 7-Mudar Password 8-Sair");
             String read = input.readLine();
 
             switch (read) {
@@ -36,7 +36,7 @@ public class Menu {
                     System.out.println("Download");
                     out.println(1);
 
-                    System.out.println("Nome playlist:");
+                    System.out.println("Nome da playlist:");
                     String nomeP = input.readLine();
                     out.println(nomeP);
                     int idMusica=500;
@@ -54,11 +54,10 @@ public class Menu {
 
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
-                    System.out.println("Path para onde quer guardar o ficheiro");
                     boolean pathvalid=false;
                     String caminho ="";
                     while(!pathvalid){
-                        System.out.println("Path:");
+                        System.out.println("Insira o Path para onde quer guardar o ficheiro. Ex: \"C:\\Users\\Desktop\"");
                         caminho = input.readLine();
                         File f = new File(caminho);
                         if(f.isDirectory()) {
@@ -77,11 +76,11 @@ public class Menu {
                     System.out.println("Upload");
                     out.println(2);
 
-                    System.out.println("Nome playlist:");
+                    System.out.println("Nome da playlist:");
                     String nomeUP = input.readLine();
                     out.println(nomeUP);
 
-                    System.out.println("ID Musica:");
+                    System.out.println("ID da Musica:");
                     boolean invalidId = true;
                     while (invalidId){
                         try {
@@ -92,7 +91,7 @@ public class Menu {
                             System.out.println("O id introduzido é inválido");
                         }
                     }
-                    System.out.println("Nome da música");
+                    System.out.println("Insira o Nome da música no seu Pc. Ex Stairwaytoheaven");
                     String titulo = input.readLine();
                     boolean pathval=false;
                     boolean notfst = false;
@@ -100,10 +99,10 @@ public class Menu {
                     while(!pathval){
                         if(notfst){
                             System.out.println("Path Inválido, tente de novo.");
-                            System.out.println("Nome da música");
+                            System.out.println("Insira o Nome da música no seu Pc. Ex HotelCalifornia");
                             titulo = input.readLine();
                         }
-                        System.out.println("Path:");
+                        System.out.println("Insira o Path do ficheiro. Ex: \"C:\\Users\\Desktop\"");
                         path = input.readLine();
                             File f = new File(path + "\\" + titulo+".mp3");
                             if(f.exists() && !f.isDirectory()) {
@@ -140,15 +139,15 @@ public class Menu {
                     }
 
                     for (int i = 0; i < sizePlay; i++) {
-                        System.out.println("Titulo:");
+                        System.out.println("Titulo da música " + (i+1) + ":");
                         String tituloP = input.readLine();
                         out.println(tituloP);
 
-                        System.out.println("Artista:");
+                        System.out.println("Artista da música " + (i+1) + ":");
                         String artistaP = input.readLine();
                         out.println(artistaP);
 
-                        System.out.println("Ano:");
+                        System.out.println("Ano da música " + (i+1) + ":");
                         boolean invalidYear = true;
                         while (invalidYear){
                             try {
@@ -164,7 +163,7 @@ public class Menu {
                         if (input.readLine().equals("1")){
                             out.println(1);
 
-                            System.out.println("Nome da música na tua máquina");
+                            System.out.println("Insira o Nome da música no seu Pc. Ex Comeasyouare");
                             String tituloA = input.readLine();
                             boolean pathvalA=false;
                             boolean notfstA = false;
@@ -172,10 +171,10 @@ public class Menu {
                             while(!pathvalA){
                                 if(notfstA){
                                     System.out.println("Path Inválido, tente de novo.");
-                                    System.out.println("Nome da música");
+                                    System.out.println("Insira o Nome da música no seu Pc. Ex NothingElseMatters");
                                     tituloA = input.readLine();
                                 }
-                                System.out.println("Path:");
+                                System.out.println("Insira o Path do ficheiro. Ex: \"C:\\Users\\Desktop\"");
                                 pathA = input.readLine();
                                 File f = new File(pathA + "\\" + tituloA+".mp3");
                                 if(f.exists() && !f.isDirectory()) {
