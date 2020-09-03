@@ -135,16 +135,18 @@ public class Menu {
                             System.out.println("Path Inválido, tente de novo.");
                             System.out.println("Insira o Nome da música no seu Pc. Ex HotelCalifornia");
                             titulo = input.readLine();
-                            if (titulo.equals("quit")) {
-                                idM=-1;
-                                exitUpload = true;
-                                break;
-                            }
+                        }
+                        if (titulo.equals("quit")) {
+                            idM=-1;
+                            out.println(-1);
+                            exitUpload = true;
+                            break;
                         }
                         System.out.println("Insira o Path do ficheiro. Ex: \"C:\\Users\\Desktop\"");
                         path = input.readLine();
                         if (path.equals("quit")) {
                             idM=-1;
+                            out.println(-1);
                             exitUpload = true;
                             break;
                         }
