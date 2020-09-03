@@ -76,6 +76,7 @@ public class Server {
                         case 2:
                             System.out.println("Upload");
                             String nome_PL = in.readLine();
+                            nome_PL.equals("quit");
                             int mId = Integer.parseInt(in.readLine());
                             if (model.nomeExistLista(nome_PL)) {
                                 if (!user.equals(model.getOwnerName(nome_PL))) {
@@ -90,7 +91,8 @@ public class Server {
                                         DataInputStream inFile = new DataInputStream(sock.getInputStream());
                                         model.upload(nome_PL, musica, sock, inFile, musica.getTitulo());
                                     } catch (Exception e) {
-                                        out.println("Forneceu um id de musica inválido");
+                                        if(mId>=0)
+                                            out.println("Forneceu um id de musica inválido");
                                     }
                                 }
                             } else {
@@ -137,6 +139,7 @@ public class Server {
                         case 4:
                             System.out.println("Adicionar a PlayList");
                             String nomepl = in.readLine();
+                            nomepl.equals("quit");
                             if (model.nomeExistLista(nomepl)) {
                                 if (!user.equals(model.getOwnerName(nomepl))) {
                                     in.readLine();
