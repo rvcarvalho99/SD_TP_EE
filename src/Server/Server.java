@@ -68,6 +68,7 @@ public class Server {
 
                                     model.download(plName, musicId, connDownload, outFile, out);
                                 } catch (Exception e) {
+                                    if(musicId>=0)
                                     out.println("Forneceu um id de musica inválido");
                                 }
                             } else out.println("Esta PlayList não existe");
