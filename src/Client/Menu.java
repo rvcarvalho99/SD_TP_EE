@@ -33,24 +33,43 @@ public class Menu {
 
             switch (read) {
                 case "1":
-                    System.out.println("Download");
+                    System.out.println("Download:   ##Se quiser sair escreva \"quit\"##");
                     out.println(1);
 
                     System.out.println("Nome da playlist:");
                     String nomeP = input.readLine();
+                    if(nomeP.equals("quit")){
+                        out.println(-1);
+                        out.println(-1);
+                        break;
+                    }
                     out.println(nomeP);
+                    String idMusicaS = "";
                     int idMusica=500;
                     System.out.println("ID da música");
                     boolean ivalidId = true;
+                    boolean exitDownload = false;
                     while (ivalidId){
                         try{
-                            idMusica = Integer.parseInt(input.readLine());
+                            idMusicaS = input.readLine();
 
-                            ivalidId=false;
+                            idMusica = Integer.parseInt(idMusicaS);
+
+                            if (idMusica>0){
+                                ivalidId=false;
+                            }
+                            else System.out.println("O ID introduzido é inválido");
                         }catch (Exception invalidID){
-                            System.out.println("O ID introduzido é inválido");
+                            if (idMusicaS.equals("quit")){
+                                out.println(-1);
+                                exitDownload = true;
+                                break;
+                            }
+                            else System.out.println("O ID introduzido é inválido");
                         }
                     }
+
+                    if (exitDownload) break;
 
                     System.out.println("Insira o nome que quer dar à música");
                     String nomemusica = input.readLine();
@@ -73,26 +92,44 @@ public class Menu {
 
                     break;
                 case "2":
-                    System.out.println("Upload");
+                    System.out.println("Upload:   ##Se quiser sair escreva \"quit\"##");
                     out.println(2);
 
                     System.out.println("Nome da playlist:");
                     String nomeUP = input.readLine();
-                    out.println(nomeUP);
+                    if (nomeUP.equals("quit")){
+                        out.println(-1);
+                        out.println(-1);
+                        break;
+                    }
+                    else out.println(nomeUP);
 
                     System.out.println("ID da Musica:");
+                    String idMS = "";
                     boolean invalidId = true;
-                    while (invalidId){
+                    boolean exitUpload = false;
+                    while (invalidId) {
                         try {
-                            int idM = Integer.parseInt(input.readLine());
+                            idMS = input.readLine();
+                            int idM = Integer.parseInt(idMS);
                             out.println(idM);
-                            invalidId = false;
-                        }catch (Exception fakeSize){
-                            System.out.println("O id introduzido é inválido");
+                            if (idM > 0) {
+                                invalidId = false;
+                            } else System.out.println("O ID introduzido é inválido");
+                        } catch (Exception fakeSize) {
+                            if (idMS.equals("quit")) {
+                                out.println(-1);
+                                exitUpload = true;
+                                System.out.println("O id introduzido é inválido");
+                            }
                         }
                     }
+
+                    if (exitUpload) break;
+
                     System.out.println("Insira o Nome da música no seu Pc. Ex Stairwaytoheaven");
                     String titulo = input.readLine();
+                    if (titulo.equals("quit")) break;
                     boolean pathval=false;
                     boolean notfst = false;
                     String path ="";
@@ -101,16 +138,24 @@ public class Menu {
                             System.out.println("Path Inválido, tente de novo.");
                             System.out.println("Insira o Nome da música no seu Pc. Ex HotelCalifornia");
                             titulo = input.readLine();
+                            if(titulo.equals("quit")) {
+                                exitUpload = true;
+                                break;
+                            }
                         }
                         System.out.println("Insira o Path do ficheiro. Ex: \"C:\\Users\\Desktop\"");
                         path = input.readLine();
+                        if(path.equals("quit")) {
+                            exitUpload = true;
+                            break;
+                        }
                             File f = new File(path + "\\" + titulo+".mp3");
                             if(f.exists() && !f.isDirectory()) {
                                 pathval=true;
                             }
                             notfst=true;
                     }
-
+                    if (exitUpload) break;
 
                     Socket connUpload = new Socket("127.0.0.1", port);
                     DataOutputStream outfile = new DataOutputStream(connUpload.getOutputStream());
@@ -119,11 +164,13 @@ public class Menu {
                     t3.start();
 
                     break;
+
                 case "3":
                     System.out.println("Criar PlayList");
                     out.println(3);
-                    System.out.println("Nome da PlayList");
+                    System.out.println("Nome da PlayList ##Se quiser cancelar escreva \"quit\" !!Depois do nome ser dado é impossível cancelar!!");
                     String nomePlay = input.readLine();
+                    if (nomePlay.equals("quit")) break;
                     out.println(nomePlay);
                     System.out.println("Número de músicas da PlayList");
                     int sizePlay = 0;
