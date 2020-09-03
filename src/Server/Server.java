@@ -100,6 +100,7 @@ public class Server {
                         case 3:
                             System.out.println("Criar PlayList");
                             String nomePL = in.readLine();
+                            nomePL.equals("quit");
                             if (model.nomeExistLista(nomePL)) {
                                 int numeromusicas = Integer.parseInt(in.readLine());
                                 for (int i = 0; i < numeromusicas; i++) {
